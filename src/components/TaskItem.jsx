@@ -1,12 +1,10 @@
-import { Image, View, Text, Modal, Pressable, Button, TextInput,TouchableHighlight } from 'react-native'
+import { Image, View, Text, Modal, Pressable, Button, TextInput, TouchableHighlight } from 'react-native'
 import React, { Children, useEffect, useState } from 'react'
 import StyledText from './StyledText'
 import { getWeather } from '../api/weatherAPI'
 import { format } from "date-fns";
 import styles from "../../styles/styles"
 import { CheckBox, Icon } from "react-native-elements"
-import { Swiper, SwiperSlide } from 'swiper/react';
-import Swipeable from 'react-native-swipeable';
 
 
 
@@ -60,7 +58,7 @@ const TaskItem = (propsItem) => {
     }, [])
 
 
-    
+
 
     return (
         <View>
@@ -68,7 +66,7 @@ const TaskItem = (propsItem) => {
             <ModalPoup visible={visible} >
                 <View style={styles.modal.modalHeader}>
                     <View >
-                        <TextInput style={{ fontSize: 40, color: 'white', fontWeight: 'bold' }}>{propsItem.title}</TextInput>
+                        <TextInput style={{ fontSize: 40, color: 'white', fontWeight: 'bold' }}>pruebs</TextInput>
                     </View>
 
 
@@ -86,12 +84,12 @@ const TaskItem = (propsItem) => {
 
                     <View>
                         <Text style={{ color: 'white', fontWeight: 'bold' }}>Color</Text>
-                        
+
                     </View>
 
                     <View>
                         <Text style={{ color: 'white', fontWeight: 'bold' }}>Description</Text>
-                        <TextInput  multiline={true} numberOfLines={10} style={{ color: 'white', paddingBottom: 5, paddingStart: 5 }} placeholder='Description' >{propsItem.description}</TextInput>
+                        <TextInput multiline={true} numberOfLines={10} style={{ color: 'white', paddingBottom: 5, paddingStart: 5 }} placeholder='Description' >{propsItem.description}</TextInput>
                     </View>
 
 

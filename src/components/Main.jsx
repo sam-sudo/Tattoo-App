@@ -1,12 +1,14 @@
 import React from 'react'
 import ProposalsList from './ProposalsList'
 import TaskList from './TaskList'
+import TaskCalendar from './TaskCalendar'
 
 
 const Main = () => {
 
     return (
-        <ProposalsList></ProposalsList>
+        <TaskCalendar></TaskCalendar>
+       //<TaskList></TaskList>
     )
 }
 

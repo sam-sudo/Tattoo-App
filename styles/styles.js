@@ -3,15 +3,16 @@ import { StyleSheet, Dimensions, StatusBar } from 'react-native';
 
 //calcula la altura usable de la pantalla
 const windowHeight = Dimensions.get('window').height;
+const windoWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
 
     container: {
         marginTop: Constants.statusBarHeight,
-        flexGrow: 1, 
+        flexGrow: 1,
         margin: 10,
         height: windowHeight,
-        
+        backgroundColor: 'red'
     },
     title: {
         fontSize: 30,
@@ -42,72 +43,83 @@ const styles = StyleSheet.create({
     }
 });
 
+const calendar = StyleSheet.create({
+    container: {
+        marginTop: Constants.statusBarHeight,
+        flex: 1,
+        margin: 10,
+        padding:10
+    }
+
+
+})
+
 const modal = StyleSheet.create({
     modalItemTask: {
-        flex:1,
+        flex: 1,
         backgroundColor: 'rgba(0,0,0,0.8)',
-        justifyContent:'center',
-        alignItems:'center'
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    modalContainer:{
-        width:'80%',
-        height:'80%',
-        backgroundColor:'#6556D9',
-        paddingHorizontal:20,
-        paddingVertical:30,
-        borderRadius:20,
-        elevation:20
+    modalContainer: {
+        width: '80%',
+        height: '80%',
+        backgroundColor: '#6556D9',
+        paddingHorizontal: 20,
+        paddingVertical: 30,
+        borderRadius: 20,
+        elevation: 20
     },
     modalHeader: {
         width: '100%',
         alignItems: 'flex-start',
         justifyContent: 'center',
-      },
+    },
 })
 
 const colors = {
-    mainColor:'#6556D9',
-    onTapInColor:'#F2F3F4',
-    onTapOutColor:'#FFFFFF'
+    mainColor: '#6556D9',
+    onTapInColor: '#F2F3F4',
+    onTapOutColor: '#FFFFFF'
 }
 
 const swipeList = StyleSheet.create({
-    contaier:{
-        backgroundColor:'green',
-        flex:1
+    contaier: {
+        backgroundColor: 'green',
+        flex: 1
     },
-    rowBack:{
-        alignItems:'flex-start',
-        flex:1,
-        flexDirection:'row',
-        justifyContent:'flex-start',
-        paddingLeft:15,
-        margin:5,
-        marginBottom:0,
-        borderRadius:5
+    rowBack: {
+        alignItems: 'flex-start',
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        paddingLeft: 15,
+        margin: 5,
+        marginBottom: 0,
+        borderRadius: 5
     },
-    button_right:{
-        alignItems:'center',
-        bottom:0,
-        justifyContent:'center',
-        position:'absolute',
-        top:0,
-        width:75,
+    button_right: {
+        alignItems: 'center',
+        bottom: 0,
+        justifyContent: 'center',
+        position: 'absolute',
+        top: 0,
+        width: 75,
     },
-    button_right_back_left:{
-        backgroundColor:'#5DADE2',
-        
+    button_right_back_left: {
+        backgroundColor: '#5DADE2',
+
     },
-    button_right_back_right:{
-        backgroundColor:'#CD6155',
-        
-        left:75,
-        borderTopRightRadius:5,
-        borderBottomRightRadius:5,
+    button_right_back_right: {
+        backgroundColor: '#CD6155',
+
+        left: 75,
+        borderTopRightRadius: 5,
+        borderBottomRightRadius: 5,
     }
 })
 
 
 
 
-export default {styles,colors,modal,swipeList}
+export default { styles, colors, calendar, modal, swipeList, windoWidth, windowHeight }
