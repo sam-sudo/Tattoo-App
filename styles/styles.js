@@ -5,6 +5,12 @@ import { StyleSheet, Dimensions, StatusBar } from 'react-native';
 const windowHeight = Dimensions.get('window').height;
 const windoWidth = Dimensions.get('window').width;
 
+const colors = {
+    mainColor: '#6556D9',
+    onTapInColor: '#F2F3F4',
+    onTapOutColor: '#FFFFFF'
+}
+
 const styles = StyleSheet.create({
 
     container: {
@@ -12,7 +18,6 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         margin: 10,
         height: windowHeight,
-        backgroundColor: 'red'
     },
     title: {
         fontSize: 30,
@@ -33,7 +38,7 @@ const styles = StyleSheet.create({
     },
     listTile: {
         fontSize: 15,
-        color: '#6556D9',
+        color: colors.mainColor,
         fontWeight: 'bold',
     },
     linesTop: {
@@ -54,6 +59,8 @@ const calendar = StyleSheet.create({
 
 })
 
+
+
 const modal = StyleSheet.create({
     modalItemTask: {
         flex: 1,
@@ -64,7 +71,7 @@ const modal = StyleSheet.create({
     modalContainer: {
         width: '80%',
         height: '80%',
-        backgroundColor: '#6556D9',
+        backgroundColor: colors.mainColor,
         paddingHorizontal: 20,
         paddingVertical: 30,
         borderRadius: 20,
@@ -77,11 +84,6 @@ const modal = StyleSheet.create({
     },
 })
 
-const colors = {
-    mainColor: '#6556D9',
-    onTapInColor: '#F2F3F4',
-    onTapOutColor: '#FFFFFF'
-}
 
 const swipeList = StyleSheet.create({
     contaier: {

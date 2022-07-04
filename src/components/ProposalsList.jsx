@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { format } from 'date-fns'
-import StyledText from '../components/StyledText'
 
 import { View, Text, Pressable, TouchableOpacity,FlatList } from "react-native";
 import proposals from "../data/proposals";

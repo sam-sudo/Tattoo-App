@@ -9,6 +9,7 @@ const Main = () => {
     return (
         <TaskCalendar></TaskCalendar>
        //<TaskList></TaskList>
+       //<ProposalsList></ProposalsList>
     )
 }
 
