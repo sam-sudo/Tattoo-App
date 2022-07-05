@@ -30,7 +30,7 @@ export default [
         title:'task-3',
         description:'description task-3: this is...',
         done: false,
-        date:'2022/06/28',
+        date:'2022/07/28',
         hourStart:'08:00',
         hourEnd:'10:00',
         grades:'21°',

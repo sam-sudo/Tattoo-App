@@ -4,7 +4,7 @@ import TaskList from './TaskList'
 import TaskCalendar from './TaskCalendar'
 
 
-const Main = () => {
+export const Main = () => {
 
     return (
         <TaskCalendar></TaskCalendar>
@@ -12,5 +12,3 @@ const Main = () => {
        //<ProposalsList></ProposalsList>
     )
 }
-
-export default Main
