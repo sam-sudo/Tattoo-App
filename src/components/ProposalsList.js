@@ -55,7 +55,7 @@ const ProposalsList = () => {
 
 
     return (
-        <View style={styles.styles.container}>
+        <View style={styles.proposal.container}>
             <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text style={{ color: '#6556D9', fontSize: 30 }}>Proposals</Text>

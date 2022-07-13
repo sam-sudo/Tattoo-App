@@ -1,11 +1,13 @@
-import { Image, View, Text, Modal, Pressable, Button, TextInput, TouchableHighlight } from 'react-native'
+import { Image, View, Text, Modal, Pressable, Button, TextInput, TouchableOpacity } from 'react-native'
 import React, { Children, useEffect, useState } from 'react'
 import StyledText from './StyledText'
 import { getWeather } from '../api/weatherAPI'
 import { format } from "date-fns";
 import styles from "../../styles/styles"
 import { CheckBox, Icon } from "react-native-elements"
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
+import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
 
 
 const ModalPoup = ({ visible, children }) => {
@@ -46,8 +48,11 @@ const ModalPoup = ({ visible, children }) => {
 
 const TaskItem = (propsItem) => {
 
+
     const [imageTime, setImageTime] = useState(null)
-    const [visible, setVisible] = useState(false)
+    const [Modalvisible, setModalVisible] = useState(false)
+    const [datePicker, setDatePicker] = useState(false)
+
 
 
     useEffect(() => {
@@ -59,55 +64,137 @@ const TaskItem = (propsItem) => {
 
 
 
+    const hideDatePicker = () => {
+        setDatePicker(false)
+    }
+
+    const confirmDatePicker = () => {
+        setDatePicker(false)
+    }
+
+    const showImages = (arrayImages) => {
+
+        if (arrayImages.length > 0) {
+
+            // return <View style={{flexDirection:'row'}}>
+            //     {arrayImages.map(url => {
+            //         console.log('url -> ', url);
+            //         return <Image style={{ height: 100, width: 100 }} source={{ uri: url }}></Image>
+            //     })}
+            // </View>
+
+            return (
+                <Carousel
+                    layout='default'
+                    data={arrayImages}
+                    renderItem={({ item, index }) => {
+                        console.log('item -> ', item);
+                        return <View style={{ }}>
+                            {/* <Text>{item}</Text> */}
+                            <Image style={{ height: 200, width: 200 }}  source={{ uri: item }}></Image>
+                            {/* <ParallaxImage
+                                itemHeight={200}
+                                itemWidth={200}
+                                style={{ height: 200, width: 200 }}
+                                source={{ uri:'https://images-platform.99static.com/LiwJRny-UrFbwHNA3ULRsPTS85s=/0x8:1181x1189/500x500/top/smart/99designs-contests-attachments/84/84921/attachment_84921982' }}
+                                parallaxFactor={0.4}
+                            ></ParallaxImage> */}
+                        </View>
+                    }}
+                    windowSize={21}
+                    sliderWidth={styles.windoWidth - 100}
+                    itemWidth={200}
+                    //autoplay={true}
+                    hasParallaxImages={true}
+
+                >
+
+                </Carousel>
+            )
+
+        } else {
+            return (
+                <View style={{}}>
+                    <Text style={{ fontSize: 20, textAlign: 'center' }}>No images</Text>
+                </View>
+            )
+        }
+    }
+
+
 
     return (
-        <View>
+        <View style={{}}>
             {showDate(propsItem.date, propsItem.lastDate)}
-            <ModalPoup visible={visible} >
+
+
+            <ModalPoup visible={Modalvisible} >
+
+                <DateTimePickerModal
+
+                    isVisible={datePicker}
+                    mode='date'
+
+                    style={{}}
+                    date={new Date(propsItem.date)
+                    }
+                    onCancel={hideDatePicker}
+                    onConfirm={confirmDatePicker}
+
+                >
+
+                </DateTimePickerModal>
+
+
                 <View style={styles.modal.modalHeader}>
                     <View >
-                        <TextInput style={{ fontSize: 40, color: 'white', fontWeight: 'bold' }}>pruebs</TextInput>
+                        <TextInput multiline={true} numberOfLines={2} style={{ fontSize: 30, color: 'white', fontWeight: 'bold' }}>{propsItem.title}</TextInput>
                     </View>
 
 
                 </View>
 
-                <View style={{ marginTop: 30 }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-                        <Text style={{ color: 'white' }}>Start time</Text>
-                        <Icon name="calendar" type="feather" color="white"></Icon>
+                <View style={{ height: '70%' }}>
 
-                        <Text style={{ color: 'white' }}>End time</Text>
-                        <Icon name="calendar" type="feather" color="white"></Icon>
+                    <TouchableOpacity style={{ backgroundColor: styles.modal.editableColor, borderRadius: 10 }} onPressIn={() => setDatePicker(true)}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Text style={{ color: 'white', fontSize: 20, flex: 1, textAlign: 'center' }}>{propsItem.date}</Text>
+                            <Icon name="calendar" type="feather" size={50} color="white" />
 
+
+
+                        </View>
+                    </TouchableOpacity>
+
+
+                    <View style={{ marginTop: 10 }}>
+                        <TextInput multiline={true} numberOfLines={10} style={styles.modal.editableInput} placeholder='Description' >{propsItem.description}</TextInput>
                     </View>
 
-                    <View>
-                        <Text style={{ color: 'white', fontWeight: 'bold' }}>Color</Text>
-
-                    </View>
-
-                    <View>
-                        <Text style={{ color: 'white', fontWeight: 'bold' }}>Description</Text>
-                        <TextInput multiline={true} numberOfLines={10} style={{ color: 'white', paddingBottom: 5, paddingStart: 5 }} placeholder='Description' >{propsItem.description}</TextInput>
+                    <View style={{ marginTop: 10 }}>
+                        {showImages(Array.from(propsItem.img ?? []))}
+                        {/* <Image style={{height:100, width:100}} source={{uri:Array.from(propsItem.img ?? '')[0]}}></Image> */}
                     </View>
 
 
                 </View>
 
-                <View>
-                    <View style={{ alignItems: 'center', justifyContent: 'flex-end' }}>
+                <View style={{ height: '10%' }}>
+                    <View style={{ alignItems: 'center', }}>
 
                         <View style={{ flexDirection: 'row', alignSelf: 'flex-end', }}>
-                            <Button title='Cancel' onPress={() => setVisible(false)} color='black' ></Button>
-                            <Button title='Save' ></Button>
+                            <Button title='Cancel' onPress={() => setModalVisible(false)} color='black' ></Button>
+                            <Button title='Save' onPress={() => {
+                                //send data update to firebase
+                                //firebase.update( propsItem)
+                            }}></Button>
                         </View>
                     </View>
 
                 </View>
 
             </ModalPoup>
-            <Pressable onPress={() => setVisible(true)}>
+            <Pressable onPress={() => setModalVisible(true)}>
                 <View key={propsItem.id} style={{ flexDirection: 'row', borderColor: 'grey', borderRadius: 10, borderWidth: 0, padding: 10, alignItems: 'flex-start' }}>
                     <Image style={{ width: 15, height: 15 }} source={getColor(propsItem.color)}></Image>
 
@@ -134,7 +221,7 @@ const TaskItem = (propsItem) => {
 
 
 
-
+//------------------------function------------------------
 
 
 function getHour(hour) {
@@ -199,6 +286,9 @@ async function getIcon(propsItem) {
     return icon
 
 }
+
+
+
 
 function showDate(date, lastDate) {
 

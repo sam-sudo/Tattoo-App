@@ -1,9 +1,8 @@
-import React, { createRef, useEffect, useState } from 'react'
-import { View, Text, Pressable, TouchableOpacity, FlatList } from "react-native";
+import React, {  useEffect, useState } from 'react'
+import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import tasks from '../data/tasks';
-import EventCalendar from 'react-native-events-calendar'
 import styles from '../../styles/styles';
-import { Calendar, CalendarList, Agenda } from 'react-native-calendars'
+import { Agenda } from 'react-native-calendars'
 import { format } from 'date-fns';
 import StyledText from './StyledText'
 
@@ -11,9 +10,9 @@ import StyledText from './StyledText'
 
 const TaskCalendar = () => {
 
+
     const [items, setItems] = useState({});
     const [markedDates, setMarked] = useState({});
-    const [lastDay, setLastDay] = useState('')
 
     useEffect(() => marketDates(), [])
 
@@ -92,19 +91,11 @@ const TaskCalendar = () => {
     //{"2022-06-24":  [{ "2022-06-24": {"name": "task-3", },},], }
 
 
-    const renderDay = (item) => {
-        return <TouchableOpacity style={{ marginRight: 10, marginTop: 17, marginBottom: 10 }}>
-            <View
-                style={{
-                    padding: 10,
-                    backgroundColor: 'white',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                }}>
-                <StyledText big black bold>{item.title}</StyledText>
-                <Text>{item.description}</Text>
-            </View>
+    const renderDay = item => {
+        return <TouchableOpacity style={styles.calendar.itemContainer}>
+
+            <StyledText big black bold>{item.title}</StyledText>
+            <Text>{item.description}</Text>
         </TouchableOpacity>
     }
 
@@ -117,26 +108,11 @@ const TaskCalendar = () => {
 
             <Agenda
                 items={items}
-
-                //loadItemsForMonth={{}}
-                onDayPress={day => {
-                    loadItems(day)
-                    const dotsDefault = { key: 'dotDefault', color: '#5ACEF9' };
-                    const dotsSelected = { key: 'dotDefault2', color: 'red', };
-                    // console.log('last day -> ', lastDay);
-                    // console.log('items ->', items);
-                    //lastDay != '' ? markedDates[lastDay] = { dots: [dotsDefault] } : ''
-
-                   // markedDates[day.dateString] != null ? markedDates[day.dateString] = { dots: [dotsSelected] } : null
-
-                    setLastDay(day.dateString)
-                    console.log('day pressed');
-                }}
-
-                onDayChange={() => {
-                    console.log('day changed -> ');
-                }}
                 
+                //loadItemsForMonth={{}}
+                onDayPress={loadItems}
+
+
 
 
                 renderEmptyData={() => {
@@ -147,7 +123,7 @@ const TaskCalendar = () => {
                     )
                 }}
                 renderItem={renderDay}
-
+                
                 markedDates={markedDates}
 
                 // Hide knob button. Default = false
@@ -155,14 +131,14 @@ const TaskCalendar = () => {
                 // When `true` and `hideKnob` prop is `false`, the knob will always be visible and the user will be able to drag the knob up and close the calendar. Default = false
                 showClosingKnob={true}
 
-                onRefresh={() => { }}
-
+                //onRefresh={() => { }}
+                 
                 markingType={'multi-dot'}
-
+                
                 // Max amount of months allowed to scroll to the past. Default = 50
-                pastScrollRange={30}
+                pastScrollRange={5}
                 // Max amount of months allowed to scroll to the future. Default = 50
-                futureScrollRange={30}
+                futureScrollRange={5}
 
 
             />
