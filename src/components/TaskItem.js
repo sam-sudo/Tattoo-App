@@ -1,13 +1,15 @@
-import { Image, View, Text, Modal, Pressable, Button, TextInput, TouchableOpacity } from 'react-native'
-import React, { Children, useEffect, useState } from 'react'
+import { Image, View, Text, Modal, Pressable, Button, TextInput, TouchableOpacity, ImageBackground } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import StyledText from './StyledText'
 import { getWeather } from '../api/weatherAPI'
 import { format } from "date-fns";
 import styles from "../../styles/styles"
 import { CheckBox, Icon } from "react-native-elements"
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { TaskItemModel } from '../model/TaskItemModel';
 
-import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
+import Carousel, { Pagination } from 'react-native-snap-carousel';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 const ModalPoup = ({ visible, children }) => {
@@ -30,13 +32,15 @@ const ModalPoup = ({ visible, children }) => {
     }
 
     return (
-        <Modal transparent visible={showModal}  >
+        <Modal onRequestClose={() => setShowModal(false)} transparent visible={showModal}  >
             <View style={styles.modal.modalItemTask}>
                 <View style={styles.modal.modalContainer}>
 
 
+                    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
 
-                    {children}
+                        {children}
+                    </ScrollView>
 
                 </View>
             </View>
@@ -45,13 +49,46 @@ const ModalPoup = ({ visible, children }) => {
 }
 
 
+// class TaskItemModel {
+
+//     id
+//     title
+//     descriptiong
+//     date
+//     hourStart
+//     hourEnd
+//     img
+
+//     constructor(id, title, description, date, hourStart, hourEnd, img) {
+//         this.id = id
+//         this.title = title
+//         this.description = description
+//         this.date = date
+//         this.hourStart = hourStart
+//         this.date = hourEnd
+//         this.img = img
+//     }
+
+
+
+// }
+
 
 const TaskItem = (propsItem) => {
+
+    const propsItemObject = new TaskItemModel(propsItem.id, propsItem.title, propsItem.description, propsItem.date, propsItem.hourStart, propsItem.hourEnd, propsItem.position, propsItem.img)
 
 
     const [imageTime, setImageTime] = useState(null)
     const [Modalvisible, setModalVisible] = useState(false)
+    const [showFullImg, setShowFullImg] = useState(false)
     const [datePicker, setDatePicker] = useState(false)
+    const [datePickerTimerStart, setDatePickerTimerStart] = useState(false)
+    const [datePickerTimerEnd, setDatePickerTimerEnd] = useState(false)
+    const [propsItemTemp, setPropsItemTemp] = useState(propsItemObject)
+
+
+
 
 
 
@@ -65,51 +102,113 @@ const TaskItem = (propsItem) => {
 
 
     const hideDatePicker = () => {
-        setDatePicker(false)
+        if (datePicker == true) setDatePicker(false)
+        if (datePickerTimerStart == true) setDatePickerTimerStart(false)
+        if (datePickerTimerEnd == true) setDatePickerTimerEnd(false)
+
+
     }
 
-    const confirmDatePicker = () => {
+    const confirmDatePicker = (date) => {
+        let dateFormated = format(new Date(date), "yyyy-MM-dd")
+        propsItemTemp.date = dateFormated
+
+        //setPropsItemTemp(propsItemTemp)
         setDatePicker(false)
+    }
+    const confirmHourStartPicker = (time) => {
+        console.log('confirm start');
+        let timeFormated = new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        let hour = timeFormated.split(':')[0]
+        let minutes = timeFormated.split(':')[1]
+        propsItemTemp.hourStart = hour + ':' + minutes
+
+        setDatePickerTimerStart(false)
+    }
+    const confirmHourEndPicker = (time) => {
+
+        let timeFormated = new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        let hour = timeFormated.split(':')[0]
+        let minutes = timeFormated.split(':')[1]
+        propsItemTemp.hourEnd = hour + ':' + minutes
+
+        setDatePickerTimerEnd(false)
     }
 
     const showImages = (arrayImages) => {
 
+        const [indexDot, setIndexDot] = useState(0)
+
         if (arrayImages.length > 0) {
 
-            // return <View style={{flexDirection:'row'}}>
-            //     {arrayImages.map(url => {
-            //         console.log('url -> ', url);
-            //         return <Image style={{ height: 100, width: 100 }} source={{ uri: url }}></Image>
-            //     })}
-            // </View>
+
 
             return (
-                <Carousel
-                    layout='default'
-                    data={arrayImages}
-                    renderItem={({ item, index }) => {
-                        console.log('item -> ', item);
-                        return <View style={{ }}>
-                            {/* <Text>{item}</Text> */}
-                            <Image style={{ height: 200, width: 200 }}  source={{ uri: item }}></Image>
-                            {/* <ParallaxImage
-                                itemHeight={200}
-                                itemWidth={200}
-                                style={{ height: 200, width: 200 }}
-                                source={{ uri:'https://images-platform.99static.com/LiwJRny-UrFbwHNA3ULRsPTS85s=/0x8:1181x1189/500x500/top/smart/99designs-contests-attachments/84/84921/attachment_84921982' }}
-                                parallaxFactor={0.4}
-                            ></ParallaxImage> */}
-                        </View>
-                    }}
-                    windowSize={21}
-                    sliderWidth={styles.windoWidth - 100}
-                    itemWidth={200}
+
+                <View>
+                    <Carousel
+                        layout='default'
+                        //loop={true}
+                        lockScrollWhileSnapping={true}
+                        data={arrayImages}
+                        enableMomentum={true}
+                        onSnapToItem={(index) => {
+                            console.log('index', index);
+
+                            setIndexDot(index)
+                        }}
+                        renderItem={({ item, index }) => {
+
+                            return <TouchableOpacity delayPressIn={1000} onPressIn={() => {
+                                //touch
+                                console.log('aquiiiiii');
+                                setShowFullImg(true)
+                            }}>
+                                <ImageBackground style={{ width: 200, height: 200, }} source={{ uri: item }}>
+                                    <TouchableOpacity onPressIn={(props) => {
+                                        //delete img
+                                    }}>
+                                        <View style={{ height: 40, justifyContent: 'flex-start', padding: 5 }}>
+
+                                            <Icon
+
+                                                style={{ alignItems: 'flex-end' }}
+                                                size={25}
+                                                name='minuscircle'
+                                                type='antdesign'
+                                                color='red'
+                                            />
+
+
+
+                                        </View>
+                                    </TouchableOpacity>
+                                </ImageBackground >
+                            </TouchableOpacity>
+                        }}
+                        windowSize={21}
+                        sliderWidth={styles.windoWidth - 100}
+                        itemWidth={200}
                     //autoplay={true}
-                    hasParallaxImages={true}
 
-                >
+                    >
 
-                </Carousel>
+                    </Carousel >
+                    <Pagination
+                        dotsLength={arrayImages.length}
+                        activeDotIndex={indexDot}
+                        dotStyle={{
+                            width: 10,
+                            height: 10,
+                            borderRadius: 5,
+                            marginHorizontal: 8,
+                            backgroundColor: 'rgba(255, 255, 255, 0.92)'
+                        }}
+
+                    >
+
+                    </Pagination>
+                </View>
             )
 
         } else {
@@ -127,67 +226,210 @@ const TaskItem = (propsItem) => {
         <View style={{}}>
             {showDate(propsItem.date, propsItem.lastDate)}
 
+            <Modal visible={showFullImg} transparent={true} onRequestClose={() => setShowFullImg(false)}>
+                <View style={styles.modal.modalContainerImg}>
+                    <Image style={{ flex: 1, width: "100%", resizeMode: "contain" }} source={{ uri: "https://picsum.photos/200" }}></Image>
+
+                </View>
+            </Modal>
+
 
             <ModalPoup visible={Modalvisible} >
 
                 <DateTimePickerModal
 
                     isVisible={datePicker}
-                    mode='date'
+                    mode={'date'}
 
                     style={{}}
-                    date={new Date(propsItem.date)
-                    }
+                    date={new Date(propsItem.date)}
                     onCancel={hideDatePicker}
-                    onConfirm={confirmDatePicker}
+                    onConfirm={(props) => {
+                        confirmDatePicker(props)
+                    }}
+
+                >
+
+                </DateTimePickerModal>
+                <DateTimePickerModal
+
+                    isVisible={datePickerTimerStart}
+                    mode={'time'}
+
+                    style={{}}
+                    date={new Date(propsItem.date)}
+                    onCancel={hideDatePicker}
+                    onConfirm={(props) => {
+                        confirmHourStartPicker(props)
+                    }}
 
                 >
 
                 </DateTimePickerModal>
 
+                <DateTimePickerModal
+
+                    isVisible={datePickerTimerEnd}
+                    mode={'time'}
+
+                    style={{}}
+                    date={new Date(propsItem.date)}
+                    onCancel={hideDatePicker}
+                    onConfirm={(props) => {
+                        confirmHourEndPicker(props)
+                    }}
+
+                >
+
+                </DateTimePickerModal>
 
                 <View style={styles.modal.modalHeader}>
                     <View >
-                        <TextInput multiline={true} numberOfLines={2} style={{ fontSize: 30, color: 'white', fontWeight: 'bold' }}>{propsItem.title}</TextInput>
+                        <TextInput multiline={true} maxLength={35} numberOfLines={2} style={{ textAlign: 'center', fontSize: 30, color: 'white', fontWeight: 'bold' }}>{propsItemTemp.title}</TextInput>
                     </View>
 
 
                 </View>
 
-                <View style={{ height: '70%' }}>
+                <View style={{ flex: 1, marginTop: 20 }} >
+                    <View style={{ flexDirection: 'row', }}>
+                        <TouchableOpacity
+                            style={{
+                                paddingBottom: 10,
+                                marginEnd: 5,
+                                padding: 5,
+                                borderBottomWidth: 1,
+                                borderColor: 'white',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-around',
+                                flex: 1
+                            }}
+                            onPressIn={() => {
+                                setDatePicker(true)
+                            }}>
+                            <View >
+                                <Text style={{ color: 'white', fontSize: 15, }}>{propsItemTemp.date}</Text>
+                            </View>
+                            <View >
+                                <Icon name="calendar" type="feather" size={25} style={{ borderTopEndRadius: 10, borderBottomEndRadius: 10, }} color="white" />
 
-                    <TouchableOpacity style={{ backgroundColor: styles.modal.editableColor, borderRadius: 10 }} onPressIn={() => setDatePicker(true)}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={{ color: 'white', fontSize: 20, flex: 1, textAlign: 'center' }}>{propsItem.date}</Text>
-                            <Icon name="calendar" type="feather" size={50} color="white" />
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{
+                                padding: 5,
+                                marginStart: 5,
+                                paddingBottom: 10,
+                                borderBottomWidth: 1,
+                                borderColor: 'white',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                flex: 0.5
+                            }}
+                            onPressIn={() => {
+                                setDatePickerTimerStart(true)
+                            }}>
+                            <View >
+                                <Text style={{ color: 'white', fontSize: 15, textAlign: 'left', marginEnd: 5 }}>{propsItemTemp.hourStart}</Text>
+                            </View>
+                            <View >
+                                <Icon name="clock" type="feather" size={25} style={{ borderTopEndRadius: 10, borderBottomEndRadius: 10, }} color="white" />
+
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{
+                                marginStart: 5,
+                                padding: 5,
+                                paddingBottom: 10,
+                                borderBottomWidth: 1,
+                                borderColor: 'white',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                flex: 0.5
+                            }}
+                            onPressIn={() => {
+                                setDatePickerTimerEnd(true)
+                            }}>
+                            <View >
+                                <Text style={{ color: 'white', fontSize: 15, textAlign: 'left', marginEnd: 5 }}>{propsItemTemp.hourEnd}</Text>
+                            </View>
+                            <View >
+                                <Icon name="clock" type="feather" size={25} style={{ borderTopEndRadius: 10, borderBottomEndRadius: 10, }} color="white" />
+
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View >
+
+                        <TextInput style={{
+                            marginStart: 5,
+                            paddingBottom: 10,
+                            borderBottomWidth: 1,
+                            borderColor: 'white', color: 'white', fontSize: 15, textAlign: 'left', marginTop: 10, marginEnd: 5
+                        }}>{propsItemTemp.position}</TextInput>
+                    </View>
 
 
 
-                        </View>
-                    </TouchableOpacity>
+                    <View style={{ marginTop: 30, marginBottom: 30, flexDirection: 'column' }}>
 
+                        <TextInput
+                            multiline={true}
+                            maxLength={300}
+                            //numberOfLines={5}
+                            placeholder='Description'
+                            style={styles.modal.editableInput}
+                            onChangeText={(newDescription) => {
+                                setPropsItemTemp(prevState => ({
+                                    ...prevState,
+                                    description: newDescription
+                                }))
+                            }}>{propsItemTemp.description}</TextInput>
 
-                    <View style={{ marginTop: 10 }}>
-                        <TextInput multiline={true} numberOfLines={10} style={styles.modal.editableInput} placeholder='Description' >{propsItem.description}</TextInput>
+                        <Text style={{
+                            color: 'white',
+                            fontSize: 12,
+                            textAlign: 'center',
+                            marginTop: 10
+                        }}  >{propsItemTemp.description?.length ?? '0' + '/300'}</Text>
                     </View>
 
                     <View style={{ marginTop: 10 }}>
-                        {showImages(Array.from(propsItem.img ?? []))}
+                        {showImages(Array.from(propsItemTemp.img ?? []))}
                         {/* <Image style={{height:100, width:100}} source={{uri:Array.from(propsItem.img ?? '')[0]}}></Image> */}
                     </View>
 
 
+
                 </View>
 
-                <View style={{ height: '10%' }}>
+                <View style={{}}>
                     <View style={{ alignItems: 'center', }}>
 
-                        <View style={{ flexDirection: 'row', alignSelf: 'flex-end', }}>
-                            <Button title='Cancel' onPress={() => setModalVisible(false)} color='black' ></Button>
-                            <Button title='Save' onPress={() => {
-                                //send data update to firebase
-                                //firebase.update( propsItem)
-                            }}></Button>
+                        <View style={{ padding: 10, flexDirection: 'row', alignSelf: 'flex-end' }}>
+                            <View style={{ marginRight: 5 }}>
+                                <Button title='Cancel' onPress={() => {
+                                    console.log('aqui');
+                                    setModalVisible(false)
+                                    setPropsItemTemp(propsItemObject)
+                                    console.log(propsItemTemp);
+
+                                }}
+                                    color='black' >
+
+                                </Button>
+                            </View>
+                            <View>
+                                <Button title='Save' onPress={() => {
+                                    //send data update to firebase
+                                    //firebase.update( propsItem)
+                                }}></Button>
+                            </View>
                         </View>
                     </View>
 
@@ -232,20 +474,31 @@ function getHour(hour) {
 
 function getColor(color) {
 
-    switch (color) {
-        case 'blue':
-            return require('../../assets/circleBlue.png')
-        case 'red':
-            return require('../../assets/circleRed.png')
-        case 'grey':
-            return require('../../assets/circleGrey.png')
-        case 'purple':
-            return require('../../assets/circlePurple.png')
-        case 'yellow':
-            return require('../../assets/circleYellow.png')
-        default:
-            break;
+    const colors = {
+        'blue': require('../../assets/circleBlue.png'),
+        'red': require('../../assets/circleRed.png'),
+        'grey': require('../../assets/circleGrey.png'),
+        'purple': require('../../assets/circlePurple.png'),
+        'yellow': require('../../assets/circleYellow.png')
     }
+
+
+    return colors[color] ?? require('../../assets/circleGrey.png')
+
+    // switch (color) {
+    //     case 'blue':
+    //         return require('../../assets/circleBlue.png')
+    //     case 'red':
+    //         return require('../../assets/circleRed.png')
+    //     case 'grey':
+    //         return require('../../assets/circleGrey.png')
+    //     case 'purple':
+    //         return require('../../assets/circlePurple.png')
+    //     case 'yellow':
+    //         return require('../../assets/circleYellow.png')
+    //     default:
+    //         break;
+    // }
 
 
 }

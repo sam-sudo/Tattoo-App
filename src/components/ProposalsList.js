@@ -56,7 +56,10 @@ const ProposalsList = () => {
 
     return (
         <View style={styles.proposal.container}>
-            <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
+            
+            {/* -------------------------DESCOMENTAR ESTO PARA TABLET------------------------- */}
+
+            {/* <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text style={{ color: '#6556D9', fontSize: 30 }}>Proposals</Text>
                     <Icon name="arrow-right" type='evilicon' size={35} color='#6556D9' ></Icon>
@@ -72,7 +75,7 @@ const ProposalsList = () => {
                         </Pressable>
                     }
                 </View>
-            </View>
+            </View> */}
             <FlatList
                 key={(item) => item.id}
                 data={sorted_dates}

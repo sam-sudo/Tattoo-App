@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
         //marginTop: Constants.statusBarHeight,
         //flexGrow: 1,
         // margin: 10,
-        height: windowHeight,
+        height: windowHeight-statusBarHeight,
     },
 
     title: {
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
 
 const proposal = StyleSheet.create({
     container: {
-        marginTop: Constants.statusBarHeight,
+        //marginTop: Constants.statusBarHeight,
         flexGrow: 1,
         margin: 10,
         height: windowHeight,
@@ -65,13 +65,14 @@ const calendar = StyleSheet.create({
     container: {
         //marginTop: Constants.statusBarHeight,
         flex: 1,
-        margin: 10,        
+        margin: 10,
+
         //padding:10
     },
     itemContainer: {
         marginRight: 10,
         marginTop: 17,
-        width:'100%',
+        width: '100%',
         marginBottom: 10,
         padding: 10,
         backgroundColor: 'white',
@@ -87,14 +88,16 @@ const calendar = StyleSheet.create({
 
 const modal = StyleSheet.create({
     editableColor: '#7B6FD8',
-    editableInput:{
-        backgroundColor:'#7B6FD8',
-        color:'white',
-        borderRadius:10,
+    editableInput: {
+        color: 'white',
+        borderBottomWidth: 1,
+        borderColor: 'white',
+        maxHeight:150,
+        borderRadius: 10,
         paddingBottom: 5,
-         paddingStart: 5,
-         maxHeight:150,
-        
+        paddingStart: 5,
+        textAlignVertical:'bottom',
+
     },
     modalItemTask: {
         flex: 1,
@@ -104,8 +107,18 @@ const modal = StyleSheet.create({
     },
     modalContainer: {
         width: '90%',
-        height: '80%',
+        height: '90%',
+        
         backgroundColor: colors.mainColor,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 20,
+        elevation: 20
+    },
+    modalContainerImg: {
+        flex:1,
+        backgroundColor: 'rgba(0,0,0,0.8)',
+
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderRadius: 20,
@@ -113,8 +126,8 @@ const modal = StyleSheet.create({
     },
     modalHeader: {
         width: '100%',
-        height:'20%',
-        alignItems: 'flex-start',
+      //  height: '20%',
+        alignItems: 'center',
         justifyContent: 'center',
     },
 })

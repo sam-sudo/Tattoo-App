@@ -8,8 +8,8 @@ export default [
         hourStart: '22:00',
         hourEnd: '23:00',
         grades: '21°',
-        weather: 'sunny',
-        icon: '',
+        position: 'hand',
+         icon: '',
         color: 'blue'
     },
     {
@@ -21,8 +21,8 @@ export default [
         hourStart: '09:00',
         hourEnd: '11:00',
         grades: '21°',
-        weather: 'cloudy',
-        icon: '',
+        position: 'hand',
+         icon: '',
         color: 'blue'
     },
     {
@@ -34,7 +34,7 @@ export default [
         hourStart: '08:00',
         hourEnd: '10:00',
         grades: '21°',
-        weather: 'sunny',
+        position:'hand',
         icon: '',
         color: 'red'
     },
@@ -47,7 +47,7 @@ export default [
         hourStart: '10:00',
         hourEnd: '12:00',
         grades: '21°',
-        weather: 'sunny',
+        position:'hand',
         icon: '',
         color: 'yellow'
     },
@@ -60,23 +60,23 @@ export default [
         hourStart: '12:00',
         hourEnd: '15:00',
         grades: '21°',
-        weather: 'cloudy',
+        position:'hand',
         icon: '',
         color: 'red'
     },
     {
         id: '5',
         title: 'task-2 la imagen esta aqui',
-        description: 'description task-2: this is...',
+        description: 'description description task-4 description  task-4 description task-4 description task-4 description task-4 description task-4 description task-4 description task-4 description task-4 description task-4 description task-4 description task-4: this is...',
         done: true,
         date: '2022/06/28',
         hourStart: '17:00',
         hourEnd: '20:00',
         grades: '21°',
-        weather: 'rainy',
+        position:'hand',
         icon: '',
         color: 'blue',
-        img: ['https://images-platform.99static.com/LiwJRny-UrFbwHNA3ULRsPTS85s=/0x8:1181x1189/500x500/top/smart/99designs-contests-attachments/84/84921/attachment_84921982','https://as2.ftcdn.net/v2/jpg/02/21/77/09/1000_F_221770908_e2hlwgmb5f0z83Fqa1TLdepHKdSeks1E.jpg','https://as2.ftcdn.net/v2/jpg/02/21/77/09/1000_F_221770908_e2hlwgmb5f0z83Fqa1TLdepHKdSeks1E.jpg','https://as2.ftcdn.net/v2/jpg/02/21/77/09/1000_F_221770908_e2hlwgmb5f0z83Fqa1TLdepHKdSeks1E.jpg']
+        img: ['https://images-platform.99static.com/LiwJRny-UrFbwHNA3ULRsPTS85s=/0x8:1181x1189/500x500/top/smart/99designs-contests-attachments/84/84921/attachment_84921982', 'https://as2.ftcdn.net/v2/jpg/02/21/77/09/1000_F_221770908_e2hlwgmb5f0z83Fqa1TLdepHKdSeks1E.jpg', 'https://as2.ftcdn.net/v2/jpg/02/21/77/09/1000_F_221770908_e2hlwgmb5f0z83Fqa1TLdepHKdSeks1E.jpg', 'https://as2.ftcdn.net/v2/jpg/02/21/77/09/1000_F_221770908_e2hlwgmb5f0z83Fqa1TLdepHKdSeks1E.jpg']
     },
     {
         id: '6',
@@ -87,7 +87,7 @@ export default [
         hourStart: '08:00',
         hourEnd: '12:00',
         grades: '21°',
-        weather: 'sunny',
+        position:'hand',
         icon: '',
         color: 'purple'
     },
@@ -100,7 +100,7 @@ export default [
         hourStart: '17:00',
         hourEnd: '20:00',
         grades: '21°',
-        weather: 'rainy',
+        position:'hand',
         icon: '',
         color: 'red'
     },
@@ -113,7 +113,7 @@ export default [
         hourStart: '08:00',
         hourEnd: '12:00',
         grades: '21°',
-        weather: 'sunny',
+        position:'hand',
         icon: '',
         color: 'red'
     },
@@ -126,7 +126,7 @@ export default [
         hourStart: '08:00',
         hourEnd: '12:00',
         grades: '21°',
-        weather: 'cloudy',
+        position:'hand',
         icon: '',
         color: 'blue'
     },
@@ -139,20 +139,20 @@ export default [
         hourStart: '08:00',
         hourEnd: '12:00',
         grades: '21°',
-        weather: '',
+        position: 'hand',
         icon: '',
         color: 'blue'
     },
     {
         id: '11',
         title: 'task-4',
-        description: 'description task-4 description task-4 description task-4 description task-4 description task-4 description task-4 description task-4 description task-4 description task-4 description task-4 description task-4 description task-4: this is...',
+        description: 'description description task-4 description  task-4 description task-4 description task-4 description task-4 description task-4 description task-4 description task-4 description task-4 description task-4 description task-4 description task-4: this is...',
         done: true,
         date: '2022/06/28',
         hourStart: '08:00',
         hourEnd: '12:00',
         grades: '21°',
-        weather: 'cloudy',
+        position:'hand',
         icon: '',
         color: 'yellow'
     },
@@ -165,7 +165,7 @@ export default [
         hourStart: '22:00',
         hourEnd: '23:00',
         grades: '21°',
-        weather: 'cloudy',
+        position:'hand',
         icon: '',
         color: 'blue'
     },
@@ -178,7 +178,7 @@ export default [
         hourStart: '08:00',
         hourEnd: '12:00',
         grades: '21°',
-        weather: 'sunny',
+        position:'hand',
         icon: '',
         color: 'purple'
     },
@@ -192,13 +192,12 @@ export default [
     {
         id: '15',
         title: 'task-4',
-        description: 'description task-4: this is...',
         done: true,
         date: '2022/06/27',
         hourStart: '13:00',
         hourEnd: '15:00',
         grades: '21°',
-        weather: 'sunny',
+        position:'hand',
         icon: '',
         color: 'purple'
     }

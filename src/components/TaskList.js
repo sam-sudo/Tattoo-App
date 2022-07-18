@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styles from '../../styles/styles.js'
-import { Text, View, Image, FlatList } from 'react-native'
+import { Text, View, Image, FlatList, Animated } from 'react-native'
 import tasks from '../data/tasks'
 import TaskItem from './TaskItem'
 
@@ -40,7 +40,6 @@ const TaskList = () => {
             <FlatList
                 data={sorted_dates}
                 style={{}}
-
                 showsVerticalScrollIndicator={false}
                 keyExtractor={(item) => item.id}
                 ItemSeparatorComponent={() => <Text >  </Text>}

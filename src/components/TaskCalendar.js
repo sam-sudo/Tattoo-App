@@ -108,13 +108,11 @@ const TaskCalendar = () => {
 
             <Agenda
                 items={items}
-                
                 //loadItemsForMonth={{}}
                 onDayPress={loadItems}
 
 
-
-
+                
                 renderEmptyData={() => {
                     return (
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -135,10 +133,7 @@ const TaskCalendar = () => {
                  
                 markingType={'multi-dot'}
                 
-                // Max amount of months allowed to scroll to the past. Default = 50
-                pastScrollRange={5}
-                // Max amount of months allowed to scroll to the future. Default = 50
-                futureScrollRange={5}
+               
 
 
             />
