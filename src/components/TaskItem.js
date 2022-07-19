@@ -76,6 +76,7 @@ const ModalPoup = ({ visible, children }) => {
 
 const TaskItem = (propsItem) => {
 
+    console.log('primero');
     const propsItemObject = new TaskItemModel(propsItem.id, propsItem.title, propsItem.description, propsItem.date, propsItem.hourStart, propsItem.hourEnd, propsItem.position, propsItem.img)
 
 
@@ -225,7 +226,7 @@ const TaskItem = (propsItem) => {
     return (
         <View style={{}}>
             {showDate(propsItem.date, propsItem.lastDate)}
-
+            {console.log('dentro')}
             <Modal visible={showFullImg} transparent={true} onRequestClose={() => setShowFullImg(false)}>
                 <View style={styles.modal.modalContainerImg}>
                     <Image style={{ flex: 1, width: "100%", resizeMode: "contain" }} source={{ uri: "https://picsum.photos/200" }}></Image>
@@ -396,7 +397,7 @@ const TaskItem = (propsItem) => {
                             fontSize: 12,
                             textAlign: 'center',
                             marginTop: 10
-                        }}  >{propsItemTemp.description?.length ?? '0' + '/300'}</Text>
+                        }}  >{(propsItemTemp.description?.length ?? '0') + '/300'}</Text>
                     </View>
 
                     <View style={{ marginTop: 10 }}>
@@ -468,7 +469,9 @@ const TaskItem = (propsItem) => {
 
 function getHour(hour) {
     let time = parseInt(hour)
-    return time < 12 ? hour + ' AM' : hour + ' PM'
+    let hourFormated = hour.split(':')[0]
+    let minutesFormated = hour.split(':')[1]
+    return time < 12 ? (hourFormated + ':' + minutesFormated) + ' AM' : (hourFormated + ':' + minutesFormated) + ' PM'
 
 }
 
@@ -506,22 +509,25 @@ function getColor(color) {
 async function getIcon(propsItem) {
 
     const response = await getWeather()
-    const actualHour = propsItem.hourStart
+    const actualHour = propsItem.hourStart.split(':')[0] 
     const forecast = response.forecast.forecastday
     let icon = ''
 
-    const date = format(new Date(propsItem.date), "dd-MM-yyyy")
+    const date = format(new Date(propsItem.date), "yyyy-MM-dd")
 
     forecast.forEach(day => {
 
-        const dayFormat = format(new Date(day.date), "dd-MM-yyyy")
-
+        const dayFormat = format(new Date(day.date), "yyyy-MM-dd")
 
         if (dayFormat == date) {
-
             let hourChanged = ''
             day.hour.forEach(hour => {
-                hourChanged = hour.time.split(' ', 2)[1]
+
+
+                hourChanged = hour.time.split(' ', 2)[1].split(':')[0]
+                console.log(hourChanged == actualHour);
+                console.log(hourChanged);
+                console.log(actualHour);
                 if (hourChanged == actualHour) {
 
                     icon = hour.condition.icon

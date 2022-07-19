@@ -1,4 +1,4 @@
-import React, {  useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import tasks from '../data/tasks';
 import styles from '../../styles/styles';
@@ -11,10 +11,19 @@ import StyledText from './StyledText'
 const TaskCalendar = () => {
 
 
+    const [isLoading, setIsLoading] = useState(true);
     const [items, setItems] = useState({});
     const [markedDates, setMarked] = useState({});
 
-    useEffect(() => marketDates(), [])
+    useEffect(() => {
+        marketDates()
+        const timeOut = setTimeout(() => {
+            setIsLoading(false)
+        }, 2000)
+        return () => {
+            clearTimeout(timeOut)
+        }
+    }, [])
 
 
 
@@ -92,18 +101,30 @@ const TaskCalendar = () => {
 
 
     const renderDay = item => {
-        return <TouchableOpacity style={styles.calendar.itemContainer}>
+        return (
+            <View>
+                <TouchableOpacity style={styles.calendar.itemContainer}>
 
-            <StyledText big black bold>{item.title}</StyledText>
-            <Text>{item.description}</Text>
-        </TouchableOpacity>
+                    <StyledText big black bold>{item.title}</StyledText>
+                    <Text>{item.description}</Text>
+                </TouchableOpacity>
+            </View>
+        )
+    }
+
+    const WaitingComponent = () => {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 50, color: 'black', opacity: 0.1 }}>Loading...</Text>
+            </View >
+        )
     }
 
 
 
 
 
-    return (
+    return isLoading ? <WaitingComponent/> : (
         <View style={styles.calendar.container}>
 
             <Agenda
@@ -112,7 +133,7 @@ const TaskCalendar = () => {
                 onDayPress={loadItems}
 
 
-                
+
                 renderEmptyData={() => {
                     return (
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -120,20 +141,21 @@ const TaskCalendar = () => {
                         </View>
                     )
                 }}
-                renderItem={renderDay}
-                
+                renderItem={(item) => renderDay(item)}
+                hideExtraDays={false}
+                pastScrollRange={20}
+                futureScrollRange={20}
+
                 markedDates={markedDates}
-
-                // Hide knob button. Default = false
+                maxToRenderPerBatch={5}
                 hideKnob={false}
-                // When `true` and `hideKnob` prop is `false`, the knob will always be visible and the user will be able to drag the knob up and close the calendar. Default = false
                 showClosingKnob={true}
-
-                //onRefresh={() => { }}
-                 
-                markingType={'multi-dot'}
+                //onRefresh={() => items}
+                showOnlySelectedDayItems={true}
                 
-               
+                markingType={'multi-dot'}
+
+
 
 
             />

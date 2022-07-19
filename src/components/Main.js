@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect, Suspense } from 'react'
+import React, { useState, useRef, useEffect,  } from 'react'
 import ProposalsList from './ProposalsList'
 import { View, Text, Switch, Image, ImageBackground, Animated, Pressable, TouchableOpacity } from 'react-native'
 import TaskList from './TaskList'
-//import TaskCalendar from './TaskCalendar'
+import TaskCalendar from './TaskCalendar'
 import { createDrawerNavigator, DrawerContentScrollView, useDrawerStatus, DrawerItemList } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import 'react-native-gesture-handler'
@@ -18,7 +18,6 @@ import StyledSheet from './StyledText'
 
 const Drawer = createDrawerNavigator();
 
-const TaskCalendar = React.lazy(() => import('./TaskCalendar'));
 
 
 //---------------------ICON STATE EFFECT---------------------
@@ -222,16 +221,7 @@ const MyDrawer = () => {
                     drawerActiveTintColor: 'black',
                     drawerIcon: ({ focused }) => <Icon name='tasks' type='font-awesome' color={focused ? 'black' : 'white'} />
                 }} />
-            <Drawer.Screen name="Calendar" component={() => {
-                return <Suspense fallback={
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        {/* <Image source={require('../../assets/calendarAnimated.gif')}></Image> */}
-                        <Text style={{ fontSize: 20 }}>Loading...</Text>
-                    </View>
-                }>
-                    <TaskCalendar />
-                </Suspense>
-            }} options={{
+            <Drawer.Screen name="Calendar" component={TaskCalendar} options={{
                 headerShown: true,
                 header: (props) => <CustomHeaderCalendar {...props} />,
                 drawerActiveBackgroundColor: 'white',
@@ -241,6 +231,7 @@ const MyDrawer = () => {
             <Drawer.Screen name="Proposals" component={ProposalsList}
 
                 options={{
+                    
                     headerShown: true,
                     header: (props) => <CustomHeaderProposal {...props} />,
                     drawerActiveBackgroundColor: 'white',
