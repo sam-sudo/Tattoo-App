@@ -16,9 +16,11 @@ const styles = StyleSheet.create({
 
     container: {
         //marginTop: Constants.statusBarHeight,
-        //flexGrow: 1,
         // margin: 10,
-        height: windowHeight-statusBarHeight,
+        //borderWidth:1,
+        //height:300
+        //height: windowHeight,
+        flex:1
     },
 
     title: {
@@ -56,6 +58,19 @@ const proposal = StyleSheet.create({
         flexGrow: 1,
         margin: 10,
         height: windowHeight,
+    }
+
+
+})
+
+const buttons = StyleSheet.create({
+    floatButton: {
+        
+        width:50,
+        height:50,
+        position:'absolute',
+        bottom:windowHeight - windowHeight + 20,
+        right:20,
     }
 
 
@@ -127,7 +142,8 @@ const modal = StyleSheet.create({
         elevation: 20
     },
     modalHeader: {
-        width: '100%',
+        //width:'100%',
+        //backgroundColor: 'red',
       //  height: '20%',
         alignItems: 'center',
         justifyContent: 'center',
@@ -174,4 +190,4 @@ const swipeList = StyleSheet.create({
 
 
 
-export default { styles, colors, proposal, calendar, modal, swipeList, windoWidth, windowHeight, statusBarHeight }
+export default { styles, colors, buttons, proposal, calendar, modal, swipeList, windoWidth, windowHeight, statusBarHeight }

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import styles from '../../styles/styles.js'
-import { Text, View, Image, FlatList, Animated } from 'react-native'
+import { Text, View, Image, FlatList, Animated, TouchableOpacity } from 'react-native'
 import tasks from '../data/tasks'
 import TaskItem from './TaskItem'
 import { supabase } from '../api/supabaseApi.js'
-
+import { Snackbar } from 'react-native-paper'
+import { Icon } from 'react-native-elements'
+import ItemModal from './Modal/ItemModal'
+import { TaskItemModel } from '../model/TaskItemModel.js'
 
 
 
@@ -17,49 +20,98 @@ function sortDates(ascent, tasks) {
 
 
 
-async function getSupabaseTasks ()   {
-    let {data: tasksSupabase,error} = await supabase
-    .from('tasks')
-    .select()
-    return tasksSupabase
 
-}
 
 
 
 
 const TaskList = () => {
 
-    const [supabaseItems,setSupabaseItems] = useState([])
-    const [isRefresh,setIsRefresh] = useState(false)
 
-     useEffect(() => {
-        getSupabaseTasks().then((values) => {
-            setSupabaseItems(values)
-        })
-     },[])
+    const [supabaseItems, setSupabaseItems] = useState([])
+    const [isRefresh, setIsRefresh] = useState(false)
+    const [showSnackbar, setShowSnackbar] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('Error, something happened!')
 
-   
+    //modal-----
+    const [Modalvisible, setModalVisible] = useState(false)
+    const propsItemObject = new TaskItemModel()
+
+
     const [ascent, setAscent] = useState(false)
+
 
 
     //const sorted_dates = sortDates(ascent, tasks)
     const sorted_dates = sortDates(ascent, supabaseItems)
 
+    useEffect(() => {
+        getSupabaseTasks().then((values) => {
+            setSupabaseItems(values)
+        })
+    }, [])
 
-    
+
+
+
+
+    async function getSupabaseTasks() {
+        let { data: tasksSupabase, error } = await supabase
+            .from('tasks')
+            .select()
+        const textError = {
+            sdf: 'ERROR - Please check your connection'
+        }
+
+
+        if (error) {
+            setErrorMessage(error.message)
+            setShowSnackbar(true)
+        }
+        return error ? [] : tasksSupabase
+
+    }
 
 
     return (
         <View style={styles.styles.container}>
 
+
+            <ItemModal propsItemObject={propsItemObject} visible={Modalvisible} setModalVisible={setModalVisible} ></ItemModal>
+
+
+            <Snackbar
+                visible={showSnackbar}
+
+                onDismiss={
+                    setTimeout(() => {
+                        setShowSnackbar(false)
+                    }, 3000)
+                }
+
+
+            >
+                {errorMessage}
+            </Snackbar>
+
+            {supabaseItems.length == 0 ?
+                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 100 }}>
+                    <Text style={{ fontSize: 30, color: 'black', opacity: 0.1 }}>--- NO TASKS ---</Text>
+                </View>
+                :
+                null
+            }
+
+
             <FlatList
                 data={sorted_dates}
-                style={{}}
+
+                contentContainerStyle={{}}
                 showsVerticalScrollIndicator={false}
                 keyExtractor={(item) => item.id}
                 refreshing={isRefresh}
-                onRefresh={() =>{
+
+                onRefresh={() => {
                     setIsRefresh(true)
                     getSupabaseTasks().then((values) => {
                         setSupabaseItems(values)
@@ -69,18 +121,31 @@ const TaskList = () => {
                 }}
                 ItemSeparatorComponent={() => <Text >  </Text>}
                 renderItem={({ item: task, index }) => (
+
+
                     <TaskItem
                         {...task}
                         lastDate={tasks[index - 1]?.date ?? 0}
                     ></TaskItem>
                 )}
-                >
+
+            >
 
             </FlatList>
+
+            <TouchableOpacity style={styles.buttons.floatButton} onPressIn={() => {
+                setModalVisible(true)
+            }}>
+                <Icon name='add-circle-sharp' color={styles.colors.mainColor} type='ionicon' size={50} />
+            </TouchableOpacity>
+
 
         </View>
 
     )
 }
+
+
+
 
 export default TaskList

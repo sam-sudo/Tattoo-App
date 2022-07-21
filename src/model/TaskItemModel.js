@@ -2,7 +2,7 @@ class TaskItemModel {
 
 
     id
-    title
+    title 
     descriptiong
     date
     hourStart
@@ -11,7 +11,7 @@ class TaskItemModel {
     img
 
 
-    constructor(id, title, description, date, hourStart, hourEnd, position, img) {
+    constructor(id, title , description, date, hourStart, hourEnd, position, img) {
         this.id = id
         this.title = title
         this.description = description

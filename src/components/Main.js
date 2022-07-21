@@ -213,9 +213,9 @@ const MyDrawer = () => {
             drawerContent={(props) => <CustomDrawer {...props} />}
             initialRouteName='Home'>
             <Drawer.Screen name="TaskList" component={TaskList}
+            
                 options={{
                     headerShown: true,
-
                     header: (props) => <CustomHeaderTime {...props} />,
                     drawerActiveBackgroundColor: 'white',
                     drawerActiveTintColor: 'black',
