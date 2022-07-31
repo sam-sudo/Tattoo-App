@@ -6,19 +6,20 @@ import { CheckBox, Icon } from "react-native-elements"
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { ScrollView } from 'react-native-gesture-handler';
+import { supabase, updateItemTask } from "../../api/supabaseApi";
 
 
-const ModalPoup = ({ visible, children }) => {
+const ModalPoup = ({ visible, setModalVisible,setPropsItemTemp, propsItemObject, children }) => {
 
     const [showModal, setShowModal] = useState(visible)
 
     useEffect(() => {
         toggleModal()
+
     }, [visible])
 
     const toggleModal = () => {
         if (visible) {
-
             setShowModal(true)
         } else {
 
@@ -28,7 +29,12 @@ const ModalPoup = ({ visible, children }) => {
     }
 
     return (
-        <Modal onRequestClose={() => setShowModal(false)} transparent visible={showModal}  >
+        <Modal
+            onRequestClose={() => {
+                setModalVisible(false)
+                setPropsItemTemp(propsItemObject)
+            }}
+            transparent visible={showModal}  >
             <View style={styles.modal.modalItemTask}>
                 <View style={styles.modal.modalContainer}>
 
@@ -53,7 +59,9 @@ const ModalPoup = ({ visible, children }) => {
 
 
 
-
+const showFormatedTime = (time) => {
+    return new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+}
 
 
 
@@ -63,15 +71,19 @@ const ModalPoup = ({ visible, children }) => {
 const ItemModal = ({ propsItemObject, visible, setModalVisible }) => {
 
 
-
-
     const [showFullImg, setShowFullImg] = useState(false)
     const [datePicker, setDatePicker] = useState(false)
     const [datePickerTimerStart, setDatePickerTimerStart] = useState(false)
     const [datePickerTimerEnd, setDatePickerTimerEnd] = useState(false)
     const [propsItemTemp, setPropsItemTemp] = useState(propsItemObject)
 
+
+
     const defaultTime = new Date()
+
+
+
+
 
 
     const hideDatePicker = () => {
@@ -90,19 +102,15 @@ const ItemModal = ({ propsItemObject, visible, setModalVisible }) => {
         setDatePicker(false)
     }
     const confirmHourStartPicker = (time) => {
-        let timeFormated = new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        let hour = timeFormated.split(':')[0]
-        let minutes = timeFormated.split(':')[1]
-        propsItemTemp.hourStart = hour + ':' + minutes
+
+        let timeFormated = showFormatedTime(time)
+        propsItemTemp.hourStart = timeFormated
 
         setDatePickerTimerStart(false)
     }
     const confirmHourEndPicker = (time) => {
-
-        let timeFormated = new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        let hour = timeFormated.split(':')[0]
-        let minutes = timeFormated.split(':')[1]
-        propsItemTemp.hourEnd = hour + ':' + minutes
+        let timeFormated = showFormatedTime(time)
+        propsItemTemp.hourEnd = timeFormated
 
         setDatePickerTimerEnd(false)
     }
@@ -197,7 +205,7 @@ const ItemModal = ({ propsItemObject, visible, setModalVisible }) => {
 
     return (
 
-        <ModalPoup visible={visible}>
+        <ModalPoup visible={visible} setModalVisible={setModalVisible} propsItemObject={propsItemObject} setPropsItemTemp={setPropsItemTemp}>
 
             <Modal visible={showFullImg} transparent={true} onRequestClose={() => setShowFullImg(false)}>
                 <View style={styles.modal.modalContainerImg}>
@@ -255,7 +263,18 @@ const ItemModal = ({ propsItemObject, visible, setModalVisible }) => {
 
             <View style={styles.modal.modalHeader}>
 
-                <TextInput placeholder="Title" multiline={true} numberOfLines={2} maxLength={35} style={{ width:'100%', fontSize: 30, color: 'white', fontWeight: 'bold' }}>{propsItemTemp.title}</TextInput>
+                <TextInput
+                    placeholder="Title"
+                    multiline={true}
+                    numberOfLines={2}
+                    maxLength={35}
+                    onChangeText={(newTtitle) => {
+                        setPropsItemTemp((prevState) => ({
+                            ...prevState,
+                            title: newTtitle
+                        }))
+                    }}
+                    style={{ width: '100%', fontSize: 30, color: 'white', fontWeight: 'bold' }}>{propsItemTemp.title}</TextInput>
             </View>
 
 
@@ -339,11 +358,16 @@ const ItemModal = ({ propsItemObject, visible, setModalVisible }) => {
                     <TextInput
                         maxLength={20}
                         placeholder='Position'
+                        onChangeText={(newPosition) => {
+                            setPropsItemTemp(prevState => ({
+                                ...prevState,
+                                position: newPosition
+                            }))
+                        }}
                         style={{
                             marginStart: 5,
                             paddingBottom: 10,
                             borderBottomWidth: 1,
-
                             borderColor: 'white', color: 'white', fontSize: 15, textAlign: 'left', marginTop: 10, marginEnd: 5
                         }}>{propsItemTemp.position}</TextInput>
                 </View>
@@ -376,7 +400,7 @@ const ItemModal = ({ propsItemObject, visible, setModalVisible }) => {
                 <View style={{ marginTop: 10 }}>
                     {
                         //console.log(Array.from(propsItemTemp.img ?? []))
-                     showImages(Array.from(propsItemTemp.img ?? []))
+                        showImages(Array.from(propsItemTemp.img ?? []))
                     }
                     {/* <Image style={{height:100, width:100}} source={{uri:Array.from(propsItem.img ?? '')[0]}}></Image> */}
                 </View>
@@ -401,8 +425,10 @@ const ItemModal = ({ propsItemObject, visible, setModalVisible }) => {
                         </View>
                         <View>
                             <Button title='Save' onPress={() => {
-                                //send data update to firebase
-                                //firebase.update( propsItem)
+                                //send data update to supabase
+                                setModalVisible(false)
+                                updateItemTask(propsItemTemp)
+
                             }}></Button>
                         </View>
                     </View>
