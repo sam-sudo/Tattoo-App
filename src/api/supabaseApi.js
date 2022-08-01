@@ -9,10 +9,45 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 
 //-----------Item Task METHODS------------------
 
-export async function updateItemTask(itemUpdated){
+const databaseName_tasks = 'tasks'
+
+
+export async function getSupabaseTasks() {
+    let { data: tasksSupabase, error } = await supabase
+        .from(databaseName_tasks)
+        .select()
+    const textError = {
+        sdf: 'ERROR - Please check your connection'
+    }
+
+
+    if (error) {
+        setErrorMessage(error.message)
+        setShowSnackbar(true)
+    }
+    return error ? [] : tasksSupabase
+
+}
+
+export async function updateItemTask(updatedItem) {
     console.log('updating...');
-    const {data, error} = await supabase
-    .from('tasks')
-    .update({...itemUpdated})
-    .match({id: itemUpdated.id})
+    const { data, error } = await supabase
+        .from(databaseName_tasks)
+        .update({ ...updatedItem })
+        .match({ id: updatedItem.id })
+}
+
+export async function addNewItemTask(newItem) {
+    console.log('adding...');
+    const { data, error } = await supabase
+        .from(databaseName_tasks)
+        .insert(newItem)
+}
+
+
+export async function deleteTask(idDelete) {
+    const {data,error} = await supabase
+    .from(databaseName_tasks)
+    .delete()
+    .match({id:idDelete})
 }

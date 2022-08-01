@@ -70,23 +70,23 @@ const ProposalItem = ({ time, title, zone, description, lastDate, separator }) =
     let swipeableRef  = null
 
     const rightButtons = [
-        <View style={styles.swipeList.rowBack}>
+        <Pressable style={styles.swipeList.rowBack}>
             <TouchableOpacity style={[styles.swipeList.button_right, styles.swipeList.button_right_back_left]}>
                 <Icon name="check-circle" type="feather"></Icon>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.swipeList.button_right, styles.swipeList.button_right_back_right]}>
                 <Icon name="trash" type="feather"></Icon>
             </TouchableOpacity>
-        </View>
+        </Pressable>
     ];
     return (
-        <View>
+        <View >
             {showDate(time, lastDate)}
             <Swipeable
                 onRightActionRelease={() => {
                 }}
-                
                 rightButtonWidth={150}
+                
                 rightButtons={rightButtons}
             >
 

@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
         //borderWidth:1,
         //height:300
         //height: windowHeight,
-        flex:1
+        flex: 1
     },
 
     title: {
@@ -65,12 +65,12 @@ const proposal = StyleSheet.create({
 
 const buttons = StyleSheet.create({
     floatButton: {
-        
-        width:50,
-        height:50,
-        position:'absolute',
-        bottom:windowHeight - windowHeight + 20,
-        right:20,
+
+        width: 50,
+        height: 50,
+        position: 'absolute',
+        bottom: windowHeight - windowHeight + 20,
+        right: 20,
     }
 
 
@@ -91,8 +91,8 @@ const calendar = StyleSheet.create({
         marginBottom: 10,
         padding: 10,
         backgroundColor: '#E2E2E2',
-        borderLeftColor:'grey',
-        borderLeftWidth:1,
+        borderLeftColor: 'grey',
+        borderLeftWidth: 1,
         flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
@@ -109,11 +109,11 @@ const modal = StyleSheet.create({
         color: 'white',
         borderBottomWidth: 1,
         borderColor: 'white',
-        maxHeight:150,
+        maxHeight: 150,
         borderRadius: 10,
         paddingBottom: 5,
         paddingStart: 5,
-        textAlignVertical:'bottom',
+        textAlignVertical: 'bottom',
 
     },
     modalItemTask: {
@@ -125,7 +125,7 @@ const modal = StyleSheet.create({
     modalContainer: {
         width: '90%',
         height: '90%',
-        
+
         backgroundColor: colors.mainColor,
         paddingHorizontal: 20,
         paddingVertical: 10,
@@ -133,7 +133,7 @@ const modal = StyleSheet.create({
         elevation: 20
     },
     modalContainerImg: {
-        flex:1,
+        flex: 1,
         backgroundColor: 'rgba(0,0,0,0.8)',
 
         paddingHorizontal: 20,
@@ -144,7 +144,7 @@ const modal = StyleSheet.create({
     modalHeader: {
         //width:'100%',
         //backgroundColor: 'red',
-      //  height: '20%',
+        //  height: '20%',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -157,7 +157,7 @@ const swipeList = StyleSheet.create({
         flex: 1
     },
     rowBack: {
-        alignItems: 'flex-start',
+        backgroundColor:'blue',
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'flex-start',
@@ -167,15 +167,17 @@ const swipeList = StyleSheet.create({
         borderRadius: 5
     },
     button_right: {
-        alignItems: 'center',
+        //alignItems: 'center',
         bottom: 0,
         justifyContent: 'center',
         position: 'absolute',
         top: 0,
         width: 75,
+
     },
     button_right_back_left: {
         backgroundColor: '#5DADE2',
+        
 
     },
     button_right_back_right: {
@@ -184,6 +186,30 @@ const swipeList = StyleSheet.create({
         left: 75,
         borderTopRightRadius: 5,
         borderBottomRightRadius: 5,
+    },
+    rowBackDelete: {
+        
+        flex: 1,
+       // flexDirection: 'row',
+        justifyContent: 'center',
+        paddingLeft: 15,
+        margin: 5,
+        marginBottom: 0,
+        borderRadius: 5
+    },
+    deleteButon: {
+        height: 50,
+        borderTopRightRadius: 5,
+        borderBottomRightRadius: 5,
+        backgroundColor: '#CD6155',
+        left: 0,
+        alignItems: 'center',
+        
+        //bottom: 0,
+        justifyContent: 'center',
+        position: 'absolute',
+        
+        width: 100,
     }
 })
 

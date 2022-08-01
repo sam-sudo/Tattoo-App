@@ -1,4 +1,4 @@
-import { Image, View, Text, Pressable } from 'react-native'
+import { Image, View, Text, Pressable, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import StyledText from './StyledText'
 import { getWeather } from '../api/weatherAPI'
@@ -7,6 +7,8 @@ import styles from "../../styles/styles"
 import { Icon } from "react-native-elements"
 import { TaskItemModel } from '../model/TaskItemModel';
 import ItemModal from './Modal/ItemModal'
+import Swipeable from 'react-native-swipeable';
+import { deleteTask, getSupabaseTasks } from '../api/supabaseApi';
 
 
 
@@ -14,7 +16,7 @@ import ItemModal from './Modal/ItemModal'
 
 const TaskItem = (propsItem) => {
 
-    
+
     const propsItemObject = new TaskItemModel(
         propsItem.id,
         propsItem.title,
@@ -44,7 +46,28 @@ const TaskItem = (propsItem) => {
 
 
 
-
+    const deleteButon = [
+        <TouchableOpacity style={styles.swipeList.rowBackDelete}>
+            <Pressable
+            
+            style={[styles.swipeList.deleteButon]}
+            onPressIn={() => {
+                //console.log('item ->',);
+                deleteTask(propsItemObject.id).then(() =>{
+                    console.log('deleted!!!');
+                    
+                    getSupabaseTasks().then((values) => {
+                        propsItem.setSupabaseItems(values)
+                    })
+                }).catch(() => {
+                    console.log('erroe deleting!!!');
+                })
+            }}>
+                <Icon name="trash" type="feather"></Icon>
+            
+        </Pressable>
+        </TouchableOpacity>
+    ];
 
 
 
@@ -53,34 +76,41 @@ const TaskItem = (propsItem) => {
     return (
         <View style={{}}>
             {showDate(propsItem.date, propsItem.lastDate)}
-            
-
-
-            <ItemModal propsItemObject={propsItemObject} visible={Modalvisible} setModalVisible={setModalVisible} ></ItemModal>
 
 
 
-            <Pressable onPress={() => setModalVisible(true)}>
-                <View key={propsItem.id} style={{ flexDirection: 'row', borderColor: 'grey', borderRadius: 10, borderWidth: 0, padding: 10, alignItems: 'flex-start' }}>
-                    <Image style={{ width: 15, height: 15 }} source={getColor(propsItem.color)}></Image>
+            <ItemModal setSupabaseItems={propsItem.setSupabaseItems} propsItemObject={propsItemObject} visible={Modalvisible} setModalVisible={setModalVisible} ></ItemModal>
 
-                    <View style={{ flexDirection: 'column', flex: 1, }}>
-                        <View style={{ flexDirection: 'row' }}>
-                            <StyledText alignCenter > {getHour(propsItem.hourStart)} - {getHour(propsItem.hourEnd)}</StyledText>
+
+            <Swipeable
+                onRightActionRelease={() => {
+                }}
+
+                rightButtonWidth={100}
+                rightButtons={deleteButon}>
+                <Pressable onPress={() => setModalVisible(true)}>
+                    <View key={propsItem.id} style={{ flexDirection: 'row', borderColor: 'grey', borderRadius: 10, borderWidth: 0, padding: 10, alignItems: 'flex-start' }}>
+                        <Image style={{ width: 15, height: 15 }} source={getColor(propsItem.color)}></Image>
+
+                        <View style={{ flexDirection: 'column', flex: 1, }}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <StyledText alignCenter > {getHour(propsItem.hourStart)} - {getHour(propsItem.hourEnd)}</StyledText>
+                            </View>
+                            <View >
+                                <StyledText bold black > {propsItem.title ?? 'Title'}</StyledText>
+                                <Text numberOfLines={2} > {propsItem.description ?? 'Description'}</Text>
+
+                            </View>
+
+
                         </View>
-                        <View >
-                            <StyledText bold black > {propsItem.title}</StyledText>
-                            <Text numberOfLines={2} > {propsItem.description}</Text>
-
-                        </View>
+                        <Image style={{ width: 30, height: 30, }} source={{ uri: imageTime }} ></Image>
 
 
                     </View>
-                    <Image style={{ width: 30, height: 30, }} source={{ uri: imageTime }} ></Image>
+                </Pressable>
+            </Swipeable>
 
-
-                </View>
-            </Pressable>
         </View>
     )
 }
@@ -92,8 +122,8 @@ const TaskItem = (propsItem) => {
 
 function getHour(hour) {
     let time = parseInt(hour)
-    let hourFormated = hour.split(':')[0]
-    let minutesFormated = hour.split(':')[1]
+    let hourFormated = hour?.split(':')[0] ?? '--:--'
+    let minutesFormated = hour?.split(':')[1] ?? '--:--'
     return time < 12 ? (hourFormated + ':' + minutesFormated) + ' AM' : (hourFormated + ':' + minutesFormated) + ' PM'
 
 }
@@ -148,7 +178,7 @@ async function getIcon(propsItem) {
 
 
                 hourChanged = hour.time.split(' ', 2)[1].split(':')[0]
-                
+
                 if (hourChanged == actualHour) {
 
                     icon = hour.condition.icon
@@ -172,17 +202,23 @@ async function getIcon(propsItem) {
 
 function showDate(date, lastDate) {
 
-    const actualDate = new Date(date)
+    
+
+    const actualDate = date == null ? new Date() : new Date(date)
     const lastDayFormatted = new Date(lastDate)
+
+    console.log('-----actualDate -> ', actualDate.getMonth());
+    console.log('lastDayFormatted -> ', actualDate);
+
     const day = actualDate.getDate()
     const lastDay = lastDayFormatted.getDate()
-    const month = actualDate.getMonth()
-    const lastMonth = lastDayFormatted.getMonth()
+    const month = (actualDate.getMonth() + 1)
+    const lastMonth = lastDayFormatted.getMonth() +1
 
     if (day !== lastDay || month !== lastMonth) {
         return <View style={{ flexDirection: 'row', marginBottom: 5, alignItems: 'center', padding: 5 }}>
             <StyledText padding5 bold small style={{}}>
-                {actualDate.getDate()}/{actualDate.getMonth()}/{actualDate.getFullYear()}
+                {actualDate.getDate() ?? '--/'}/{month ?? '--/'}/{actualDate.getFullYear() ?? '----'}
 
             </StyledText>
             <Icon style={{ alignContent: 'center' }} size={13} name="calendar" type="feather" color="grey"></Icon>

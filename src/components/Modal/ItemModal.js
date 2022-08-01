@@ -6,12 +6,13 @@ import { CheckBox, Icon } from "react-native-elements"
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { ScrollView } from 'react-native-gesture-handler';
-import { supabase, updateItemTask } from "../../api/supabaseApi";
+import { addNewItemTask, getSupabaseTasks, mySubscription, supabase, updateItemTask } from "../../api/supabaseApi";
 
 
 const ModalPoup = ({ visible, setModalVisible,setPropsItemTemp, propsItemObject, children }) => {
 
     const [showModal, setShowModal] = useState(visible)
+    
 
     useEffect(() => {
         toggleModal()
@@ -68,7 +69,7 @@ const showFormatedTime = (time) => {
 
 
 
-const ItemModal = ({ propsItemObject, visible, setModalVisible }) => {
+const ItemModal = ({ setSupabaseItems, propsItemObject, isNewItem, visible, setModalVisible, }) => {
 
 
     const [showFullImg, setShowFullImg] = useState(false)
@@ -78,9 +79,9 @@ const ItemModal = ({ propsItemObject, visible, setModalVisible }) => {
     const [propsItemTemp, setPropsItemTemp] = useState(propsItemObject)
 
 
+   
 
     const defaultTime = new Date()
-
 
 
 
@@ -205,7 +206,7 @@ const ItemModal = ({ propsItemObject, visible, setModalVisible }) => {
 
     return (
 
-        <ModalPoup visible={visible} setModalVisible={setModalVisible} propsItemObject={propsItemObject} setPropsItemTemp={setPropsItemTemp}>
+        <ModalPoup visible={visible} setModalVisible={setModalVisible} propsItemObject={propsItemObject} setPropsItemTemp={setPropsItemTemp} >
 
             <Modal visible={showFullImg} transparent={true} onRequestClose={() => setShowFullImg(false)}>
                 <View style={styles.modal.modalContainerImg}>
@@ -417,7 +418,7 @@ const ItemModal = ({ propsItemObject, visible, setModalVisible }) => {
                             <Button title='Cancel' onPress={() => {
                                 setModalVisible(false)
                                 setPropsItemTemp(propsItemObject)
-
+                                
                             }}
                                 color='black' >
 
@@ -426,8 +427,15 @@ const ItemModal = ({ propsItemObject, visible, setModalVisible }) => {
                         <View>
                             <Button title='Save' onPress={() => {
                                 //send data update to supabase
+                                console.log('Propsitemtemp -> ',propsItemTemp);
+                                console.log('is new? -> ',isNewItem);
+                                isNewItem ? addNewItemTask(propsItemTemp) : updateItemTask(propsItemTemp)
                                 setModalVisible(false)
-                                updateItemTask(propsItemTemp)
+                                getSupabaseTasks().then((values) => {
+                                    console.log('aqui entra -> ',values);
+                                    setSupabaseItems(values)
+                                })
+                                //updateItemTask(propsItemTemp)
 
                             }}></Button>
                         </View>

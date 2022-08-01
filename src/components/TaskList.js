@@ -3,7 +3,7 @@ import styles from '../../styles/styles.js'
 import { Text, View, Image, FlatList, Animated, TouchableOpacity } from 'react-native'
 import tasks from '../data/tasks'
 import TaskItem from './TaskItem'
-import { supabase } from '../api/supabaseApi.js'
+import { getSupabaseTasks, listenerTasks, mySubscription, supabase } from '../api/supabaseApi.js'
 import { Snackbar } from 'react-native-paper'
 import { Icon } from 'react-native-elements'
 import ItemModal from './Modal/ItemModal'
@@ -35,11 +35,12 @@ const TaskList = () => {
 
     //modal-----
     const [Modalvisible, setModalVisible] = useState(false)
-    const propsItemObject = new TaskItemModel()
+    const propsNewItemObject = new TaskItemModel()
 
-
+    
     const [ascent, setAscent] = useState(false)
 
+    
 
 
     //const sorted_dates = sortDates(ascent, tasks)
@@ -55,29 +56,14 @@ const TaskList = () => {
 
 
 
-    async function getSupabaseTasks() {
-        let { data: tasksSupabase, error } = await supabase
-            .from('tasks')
-            .select()
-        const textError = {
-            sdf: 'ERROR - Please check your connection'
-        }
-
-
-        if (error) {
-            setErrorMessage(error.message)
-            setShowSnackbar(true)
-        }
-        return error ? [] : tasksSupabase
-
-    }
+    
 
 
     return (
         <View style={styles.styles.container}>
 
 
-            <ItemModal propsItemObject={propsItemObject} visible={Modalvisible} setModalVisible={setModalVisible} ></ItemModal>
+            <ItemModal setIsRefresh={setIsRefresh} isNewItem={true} propsItemObject={propsNewItemObject} visible={Modalvisible} setModalVisible={setModalVisible} ></ItemModal>
 
 
             <Snackbar
@@ -125,7 +111,8 @@ const TaskList = () => {
 
                     <TaskItem
                         {...task}
-                        lastDate={tasks[index - 1]?.date ?? 0}
+                        lastDate={supabaseItems[index - 1]?.date ?? '0'}
+                        setSupabaseItems={setSupabaseItems}
                     ></TaskItem>
                 )}
 
