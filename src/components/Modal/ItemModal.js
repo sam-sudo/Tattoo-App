@@ -299,6 +299,7 @@ const ItemModal = ({ setSupabaseItems, propsItemObject, isNewItem, visible, setM
                             setDatePicker(true)
                         }}>
                         <View >
+                            
                             <TextInput editable={false} placeholder='Empty date' style={{ color: 'white', fontSize: 15, }}>{propsItemTemp.date}</TextInput>
                         </View>
                         <View >
@@ -427,12 +428,10 @@ const ItemModal = ({ setSupabaseItems, propsItemObject, isNewItem, visible, setM
                         <View>
                             <Button title='Save' onPress={() => {
                                 //send data update to supabase
-                                console.log('Propsitemtemp -> ',propsItemTemp);
-                                console.log('is new? -> ',isNewItem);
+                               
                                 isNewItem ? addNewItemTask(propsItemTemp) : updateItemTask(propsItemTemp)
                                 setModalVisible(false)
                                 getSupabaseTasks().then((values) => {
-                                    console.log('aqui entra -> ',values);
                                     setSupabaseItems(values)
                                 })
                                 //updateItemTask(propsItemTemp)

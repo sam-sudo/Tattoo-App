@@ -204,21 +204,22 @@ function showDate(date, lastDate) {
 
     
 
-    const actualDate = date == null ? new Date() : new Date(date)
+    const actualDate = date == null ? null : new Date(date)
     const lastDayFormatted = new Date(lastDate)
 
-    console.log('-----actualDate -> ', actualDate.getMonth());
-    console.log('lastDayFormatted -> ', actualDate);
+    console.log('date ---> ',date);
 
-    const day = actualDate.getDate()
-    const lastDay = lastDayFormatted.getDate()
-    const month = (actualDate.getMonth() + 1)
-    const lastMonth = lastDayFormatted.getMonth() +1
+    const day           = actualDate?.getDate()
+    const lastDay       = lastDayFormatted.getDate()
+    const month         = (actualDate?.getMonth() + 1)
+    const lastMonth     = lastDayFormatted.getMonth() +1
+    const year          = actualDate?.getFullYear()
 
     if (day !== lastDay || month !== lastMonth) {
         return <View style={{ flexDirection: 'row', marginBottom: 5, alignItems: 'center', padding: 5 }}>
             <StyledText padding5 bold small style={{}}>
-                {actualDate.getDate() ?? '--/'}/{month ?? '--/'}/{actualDate.getFullYear() ?? '----'}
+                {console.log(day)}
+                {day ?? '--'}/{month ?? '--'}/{year?? '----'}
 
             </StyledText>
             <Icon style={{ alignContent: 'center' }} size={13} name="calendar" type="feather" color="grey"></Icon>

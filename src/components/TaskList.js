@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import styles from '../../styles/styles.js'
 import { Text, View, Image, FlatList, Animated, TouchableOpacity } from 'react-native'
-import tasks from '../data/tasks'
+import { format } from "date-fns";
+
 import TaskItem from './TaskItem'
 import { getSupabaseTasks, listenerTasks, mySubscription, supabase } from '../api/supabaseApi.js'
 import { Snackbar } from 'react-native-paper'
@@ -105,16 +106,22 @@ const TaskList = () => {
                         setIsRefresh(false)
                     })
                 }}
-                ItemSeparatorComponent={() => <Text >  </Text>}
-                renderItem={({ item: task, index }) => (
+                //ItemSeparatorComponent={() => <Text >  </Text>}
+                renderItem={({ item: task, index }) => {
 
-
-                    <TaskItem
-                        {...task}
-                        lastDate={supabaseItems[index - 1]?.date ?? '0'}
-                        setSupabaseItems={setSupabaseItems}
-                    ></TaskItem>
-                )}
+                    var todayDate   = format(new Date(), "yyyy-MM-dd")
+                    var taskDate    = format(new Date(task.date), "yyyy-MM-dd")
+                   
+                    console.log('task ->', taskDate);
+                    console.log('today ->', todayDate);
+                    
+                    if(task.date != null && taskDate >= todayDate)
+                        return <TaskItem
+                            {...task}
+                            lastDate={supabaseItems[index - 1]?.date ?? '0'}
+                            setSupabaseItems={setSupabaseItems}
+                        ></TaskItem>
+                }}
 
             >
 
