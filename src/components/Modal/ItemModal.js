@@ -432,6 +432,7 @@ const ItemModal = ({ setSupabaseItems, propsItemObject, isNewItem, visible, setM
                                 isNewItem ? addNewItemTask(propsItemTemp) : updateItemTask(propsItemTemp)
                                 setModalVisible(false)
                                 getSupabaseTasks().then((values) => {
+                                    console.log('aqui');
                                     setSupabaseItems(values)
                                 })
                                 //updateItemTask(propsItemTemp)

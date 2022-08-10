@@ -1,4 +1,4 @@
-import { Image, View, Text, Pressable, TouchableOpacity } from 'react-native'
+import { Image, View, Text, Pressable, TouchableOpacity, Animated, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import StyledText from './StyledText'
 import { getWeather } from '../api/weatherAPI'
@@ -19,54 +19,106 @@ const TaskItem = (propsItem) => {
 
     const propsItemObject = new TaskItemModel(
         propsItem.id,
-        propsItem.title,
-        propsItem.description,
+        propsItem.title.trim(),
+        propsItem.description.trim(),
         propsItem.date,
         propsItem.hourStart,
         propsItem.hourEnd,
-        propsItem.position,
-        propsItem.img)
+        propsItem.position.trim(),
+        propsItem.img,
+        propsItem.color.trim())
 
 
     const [imageTime, setImageTime] = useState(null)
     const [Modalvisible, setModalVisible] = useState(false)
 
 
-
-
-
-
-
     useEffect(() => {
         (async () => {
-            const image = await getIcon(propsItem)
+            const image = await getIcon(propsItemObject)
             setImageTime(`http:${image}`)
         })()
     }, [])
 
 
 
+
+    const state = {
+        startValue: new Animated.Value(0),
+        endValue: -100,
+        duration: 250
+    }
+
+    const startAnimation =  () => {
+        console.log('hace esto');
+
+
+        Animated.timing(state.startValue, {
+            toValue: state.endValue,
+            duration: state.duration,
+            useNativeDriver: true,
+        }).start(() => { 
+            endAnimation()
+         })
+
+
+    }
+
+    const endAnimation = () => {
+        console.log('hace esto 2');
+        Animated.timing(state.startValue, {
+            toValue: state.startValue,
+            duration: state.duration,
+            useNativeDriver: true,
+        }).start();
+    }
+
+    const aniamtedStyle = {
+        transform: [
+            {
+                translateX: state.startValue
+            }
+        ]
+    }
+
+
+
+
     const deleteButon = [
-        <TouchableOpacity style={styles.swipeList.rowBackDelete}>
-            <Pressable
-            
-            style={[styles.swipeList.deleteButon]}
-            onPressIn={() => {
-                //console.log('item ->',);
-                deleteTask(propsItemObject.id).then(() =>{
-                    console.log('deleted!!!');
-                    
-                    getSupabaseTasks().then((values) => {
-                        propsItem.setSupabaseItems(values)
-                    })
-                }).catch(() => {
-                    console.log('erroe deleting!!!');
-                })
-            }}>
-                <Icon name="trash" type="feather"></Icon>
-            
-        </Pressable>
-        </TouchableOpacity>
+        <Animated.View style={[{ flex:1},[aniamtedStyle]]}>
+            <TouchableOpacity style={styles.swipeList.rowBackDelete}>
+                <Pressable
+
+                    style={[styles.swipeList.deleteButon]}
+                    onPressIn={() => {
+                        //console.log('item ->',);
+                        Alert.alert('Are you sure to delete this?','You will not be able to recover this task ever again!',[
+                            
+                              {
+                                text: "No",
+                              },
+                              {
+                                    
+                                text: "Yes",
+                                onPress: () => {
+                                  deleteTask(propsItemObject.id).then(() =>{
+                                      console.log('deleted!!!');
+                                      
+                                      getSupabaseTasks().then((values) => {
+                                          propsItem.setSupabaseItems(values)
+                                      })
+                                  }).catch(() => {
+                                      console.log('error deleting!!!');
+                                  })
+                                },
+                              }
+                        ])
+                    }}>
+                    <Icon name="trash" type="feather"></Icon>
+
+                </Pressable>
+            </TouchableOpacity>
+        </Animated.View>
     ];
 
 
@@ -75,43 +127,71 @@ const TaskItem = (propsItem) => {
 
     return (
         <View style={{}}>
-            {showDate(propsItem.date, propsItem.lastDate)}
+            {showDate(propsItemObject.date, propsItemObject.lastDate)}
 
 
 
-            <ItemModal setSupabaseItems={propsItem.setSupabaseItems} propsItemObject={propsItemObject} visible={Modalvisible} setModalVisible={setModalVisible} ></ItemModal>
+            <ItemModal setSupabaseItems={propsItemObject.setSupabaseItems} propsItemObject={propsItemObject} visible={Modalvisible} setModalVisible={setModalVisible} ></ItemModal>
 
 
             <Swipeable
-                onRightActionRelease={() => {
-                }}
+                
+                
 
                 rightButtonWidth={100}
+                
+                
+                onLeftButtonsOpenRelease={() => {
+                    console.log('dentro');
+                    endAnimation()
+                }}
+                
+                
                 rightButtons={deleteButon}>
-                <Pressable onPress={() => setModalVisible(true)}>
-                    <View key={propsItem.id} style={{ flexDirection: 'row', borderColor: 'grey', borderRadius: 10, borderWidth: 0, padding: 10, alignItems: 'flex-start' }}>
-                        <Image style={{ width: 15, height: 15 }} source={getColor(propsItem.color)}></Image>
+                <Animated.View style={[aniamtedStyle]}>
+                    <View style={{ flexDirection: 'row', }}>
+                        <View style={{ flex: 1 }}>
+                            <Pressable style={{ marginEnd: 10, height: 100, marginBottom: 5 }} onPress={() => setModalVisible(true)}>
+                                <View key={propsItemObject.id} style={{ flexDirection: 'row', borderColor: 'grey', borderRadius: 10, borderWidth: 0, padding: 10, alignItems: 'flex-start' }}>
+                                    <Image style={{ width: 15, height: 15 }} source={getColor(propsItemObject.color)}></Image>
 
-                        <View style={{ flexDirection: 'column', flex: 1, }}>
-                            <View style={{ flexDirection: 'row' }}>
-                                <StyledText alignCenter > {getHour(propsItem.hourStart)} - {getHour(propsItem.hourEnd)}</StyledText>
-                            </View>
-                            <View >
-                                <StyledText bold black > {propsItem.title ?? 'Title'}</StyledText>
-                                <Text numberOfLines={2} > {propsItem.description ?? 'Description'}</Text>
+                                    <View style={{ flexDirection: 'column', flex: 1, }}>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <StyledText alignCenter > {getHour(propsItemObject.hourStart)} - {getHour(propsItemObject.hourEnd)}</StyledText>
+                                        </View>
+                                        <View >
+                                            <StyledText bold black numberOfLines={2}> {propsItemObject.title ?? 'Title'}</StyledText>
+                                            <Text numberOfLines={2} > {propsItemObject.description ?? 'Description'}</Text>
 
-                            </View>
+                                        </View>
 
 
+                                    </View>
+                                    <Image style={{ width: 30, height: 30, }} source={{ uri: imageTime }} ></Image>
+
+
+                                </View>
+
+                            </Pressable>
                         </View>
-                        <Image style={{ width: 30, height: 30, }} source={{ uri: imageTime }} ></Image>
+                        <Pressable onPressIn={() => {
 
+                            startAnimation()
+                            // setTimeout(() => {
+                            //     startAnimation()
+                            // }, 500);
+                        }} >
+                            <View style={{ flexDirection: 'row', alignItems: 'center', padding: 20, }}>
 
+                                <Icon size={20} name='chevron-left' type='feather' ></Icon>
+                            </View>
+                        </Pressable>
                     </View>
-                </Pressable>
+                </Animated.View>
+
             </Swipeable>
 
-        </View>
+        </View >
     )
 }
 
@@ -202,24 +282,24 @@ async function getIcon(propsItem) {
 
 function showDate(date, lastDate) {
 
-    
+
 
     const actualDate = date == null ? null : new Date(date)
     const lastDayFormatted = new Date(lastDate)
 
-    console.log('date ---> ',date);
+    console.log('date ---> ', date);
 
-    const day           = actualDate?.getDate()
-    const lastDay       = lastDayFormatted.getDate()
-    const month         = (actualDate?.getMonth() + 1)
-    const lastMonth     = lastDayFormatted.getMonth() +1
-    const year          = actualDate?.getFullYear()
+    const day = actualDate?.getDate()
+    const lastDay = lastDayFormatted.getDate()
+    const month = (actualDate?.getMonth() + 1)
+    const lastMonth = lastDayFormatted.getMonth() + 1
+    const year = actualDate?.getFullYear()
 
     if (day !== lastDay || month !== lastMonth) {
-        return <View style={{ flexDirection: 'row', marginBottom: 5, alignItems: 'center', padding: 5 }}>
-            <StyledText padding5 bold small style={{}}>
+        return <View style={{ flexDirection: 'row', marginBottom: 10, marginTop: 10, alignItems: 'center', paddingStart: 5, borderBottomWidth: 0.2, width: '20%' }}>
+            <StyledText padding5 bold small >
                 {console.log(day)}
-                {day ?? '--'}/{month ?? '--'}/{year?? '----'}
+                {day ?? '--'}/{month ?? '--'}/{year ?? '----'}
 
             </StyledText>
             <Icon style={{ alignContent: 'center' }} size={13} name="calendar" type="feather" color="grey"></Icon>

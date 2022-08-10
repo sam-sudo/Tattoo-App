@@ -9,9 +9,10 @@ class TaskItemModel {
     hourEnd
     position
     img
+    color
 
 
-    constructor(id, title , description, date, hourStart, hourEnd, position, img) {
+    constructor(id, title , description, date, hourStart, hourEnd, position, img, color) {
         this.id = id
         this.title = title
         this.description = description
@@ -20,6 +21,7 @@ class TaskItemModel {
         this.hourEnd = hourEnd
         this.position = position
         this.img = img
+        this.color = color
     }
 
 }

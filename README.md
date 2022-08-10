@@ -5,6 +5,9 @@ The main goal with this aplication is facilitate for the artist to organizate th
 Another goal is create a section where the artist can recive appoimnet from an online form (Google forms / create personal wepPage), trying to make it easier the process of listening to an idea.
 
 ## Start proyect
+
+First of all need to run: `npm i` to install the dependences.
+
 I'm working with expo, to start the proyect we can use two diferents ways:
 `npm start / expo start
 `

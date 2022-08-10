@@ -38,10 +38,7 @@ const TaskList = () => {
     const [Modalvisible, setModalVisible] = useState(false)
     const propsNewItemObject = new TaskItemModel()
 
-    
     const [ascent, setAscent] = useState(false)
-
-    
 
 
     //const sorted_dates = sortDates(ascent, tasks)
@@ -112,10 +109,11 @@ const TaskList = () => {
                     var todayDate   = format(new Date(), "yyyy-MM-dd")
                     var taskDate    = format(new Date(task.date), "yyyy-MM-dd")
                    
-                    console.log('task ->', taskDate);
-                    console.log('today ->', todayDate);
                     
-                    if(task.date != null && taskDate >= todayDate)
+                    const regexShowItem = task.date != null && taskDate >= todayDate;
+                    const regexShowItemTemp = task.date != null 
+
+                    if(regexShowItemTemp)
                         return <TaskItem
                             {...task}
                             lastDate={supabaseItems[index - 1]?.date ?? '0'}
