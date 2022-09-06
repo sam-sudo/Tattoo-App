@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, Animated, BackHandler } from "react-native";
 import tasks from '../data/tasks';
 import styles from '../../styles/styles';
-import { Agenda } from 'react-native-calendars'
+import { Agenda, Calendar } from 'react-native-calendars'
 import { format } from 'date-fns';
 import StyledText from './StyledText'
+
 
 
 
@@ -14,6 +15,9 @@ const TaskCalendar = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [items, setItems] = useState({});
     const [markedDates, setMarked] = useState({});
+
+    const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
 
     useEffect(() => {
         marketDates()
@@ -74,15 +78,17 @@ const TaskCalendar = () => {
     }
 
     const loadItems = (day) => {
+        let t0 = performance.now()
         let dateTempDay = formatDate(day.dateString.trim())
         const firstObjectTEMP = {}
         const newItems = [];
         let objectTemp = {}
         tasks.forEach((key) => {
             let dateTemp = formatDate(key.date.trim())
-
+            
             if (dateTempDay == dateTemp) {
                 objectTemp = {
+                    id: key.id,
                     title: key.title,
                     description: key.description,
                     color: key.color,
@@ -95,14 +101,21 @@ const TaskCalendar = () => {
         });
         firstObjectTEMP[dateTempDay] = newItems
         newItems.length !== 0 ? setItems(firstObjectTEMP) : null
+        let t1 = performance.now()
+        console.log('day -> ', dateTempDay);
+        console.log('time -> ', (t1-t0));
+        console.log('items -> ', firstObjectTEMP);
+
     };
 
     //{"2022-06-24":  [{ "2022-06-24": {"name": "task-3", },},], }
 
 
     const renderDay = item => {
+        //console.log('items day -> ', items);
+
         return (
-            <View>
+            <View key={item.id}>
                 <TouchableOpacity style={styles.calendar.itemContainer}>
 
                     <StyledText big black bold>{item.title}</StyledText>
@@ -123,17 +136,16 @@ const TaskCalendar = () => {
 
 
 
-
-    return isLoading ? <WaitingComponent/> : (
+    return  (
         <View style={styles.calendar.container}>
 
             <Agenda
+                //keyExtractor={item}
                 items={items}
                 //loadItemsForMonth={{}}
+                // onDayPress={loadItems}
                 onDayPress={loadItems}
-
-
-
+                scrollEventThrottle={1} // <-- Use 1 here to make sure no events are ever missed
                 renderEmptyData={() => {
                     return (
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -142,27 +154,30 @@ const TaskCalendar = () => {
                     )
                 }}
                 renderItem={(item) => renderDay(item)}
+                
                 hideExtraDays={false}
-                pastScrollRange={20}
-                futureScrollRange={20}
+                pastScrollRange={5}
 
+                futureScrollRange={5}
+                key={(item) => item.id}
                 markedDates={markedDates}
+                
                 maxToRenderPerBatch={5}
+                initialNumToRender={5}
+                updateCellsBatchingPeriod={30}
+                windowSize={21}
                 hideKnob={false}
                 showClosingKnob={true}
                 //onRefresh={() => items}
                 showOnlySelectedDayItems={true}
-                
+
                 markingType={'multi-dot'}
 
 
-
-
             />
+            
         </View>
     )
-
-
 
 
 
