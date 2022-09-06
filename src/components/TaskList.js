@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styles from '../../styles/styles.js'
-import { Text, View, Image, FlatList, Animated, TouchableOpacity } from 'react-native'
+import { Text, View, Image, FlatList, VirtualizedList, Animated, TouchableOpacity } from 'react-native'
 import { format } from "date-fns";
 
 import TaskItem from './TaskItem'
@@ -28,7 +28,7 @@ function sortDates(ascent, tasks) {
 
 const TaskList = () => {
 
-
+console.log('entra en el componente task');
     const [supabaseItems, setSupabaseItems] = useState([])
     const [isRefresh, setIsRefresh] = useState(false)
     const [showSnackbar, setShowSnackbar] = useState(false)
@@ -54,7 +54,7 @@ const TaskList = () => {
 
 
 
-    
+
 
 
     return (
@@ -87,12 +87,21 @@ const TaskList = () => {
             }
 
 
-            <FlatList
+            <VirtualizedList
                 data={sorted_dates}
+                initialNumToRender={10}
+                getItem={(item, index) => {
+                    return item[index]
+                }}
+                getItemCount={(data) => sorted_dates.length}
 
-                contentContainerStyle={{}}
                 showsVerticalScrollIndicator={false}
-                keyExtractor={(item) => item.id}
+                //key={item => item.id}
+                keyExtractor={item => {
+
+                    // return item.id
+
+                }}
                 refreshing={isRefresh}
 
                 onRefresh={() => {
@@ -105,15 +114,15 @@ const TaskList = () => {
                 }}
                 //ItemSeparatorComponent={() => <Text >  </Text>}
                 renderItem={({ item: task, index }) => {
+                    console.log('renderiza el item ',index);
+                    var todayDate = format(new Date(), "yyyy-MM-dd")
+                    var taskDate = format(new Date(task.date), "yyyy-MM-dd")
 
-                    var todayDate   = format(new Date(), "yyyy-MM-dd")
-                    var taskDate    = format(new Date(task.date), "yyyy-MM-dd")
-                   
-                    
+
                     const regexShowItem = task.date != null && taskDate >= todayDate;
-                    const regexShowItemTemp = task.date != null 
+                    const regexShowItemTemp = task.date != null
 
-                    if(regexShowItemTemp)
+                    if (regexShowItemTemp)
                         return <TaskItem
                             {...task}
                             lastDate={supabaseItems[index - 1]?.date ?? '0'}
@@ -123,7 +132,7 @@ const TaskList = () => {
 
             >
 
-            </FlatList>
+            </VirtualizedList>
 
             <TouchableOpacity style={styles.buttons.floatButton} onPressIn={() => {
                 setModalVisible(true)

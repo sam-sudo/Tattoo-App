@@ -1,12 +1,9 @@
 import React, { useState } from "react";
-import { SwipeListView } from 'react-native-swipe-list-view';
-import { format } from 'date-fns'
 
-import { View, Text, Pressable, TouchableOpacity,FlatList } from "react-native";
+import { View,FlatList } from "react-native";
 import proposals from "../data/proposals";
 import ProposalItem from "./ProposalItem";
 import styles from '../../styles/styles'
-import { Button, Icon } from "react-native-elements";
 
 
 function sortDates(ascent, proposals) {

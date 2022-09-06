@@ -50,7 +50,7 @@ const TaskItem = (propsItem) => {
     }
 
     const startAnimation =  () => {
-        console.log('hace esto');
+        
 
 
         Animated.timing(state.startValue, {
@@ -65,7 +65,6 @@ const TaskItem = (propsItem) => {
     }
 
     const endAnimation = () => {
-        console.log('hace esto 2');
         Animated.timing(state.startValue, {
             toValue: state.startValue,
             duration: state.duration,
@@ -91,7 +90,6 @@ const TaskItem = (propsItem) => {
 
                     style={[styles.swipeList.deleteButon]}
                     onPressIn={() => {
-                        //console.log('item ->',);
                         Alert.alert('Are you sure to delete this?','You will not be able to recover this task ever again!',[
                             
                               {
@@ -142,7 +140,6 @@ const TaskItem = (propsItem) => {
                 
                 
                 onLeftButtonsOpenRelease={() => {
-                    console.log('dentro');
                     endAnimation()
                 }}
                 
@@ -242,7 +239,7 @@ function getColor(color) {
 async function getIcon(propsItem) {
 
     const response = await getWeather()
-    const actualHour = propsItem.hourStart.split(':')[0]
+    const actualHour = propsItem.hourStart?.split(':')[0]
     const forecast = response.forecast.forecastday
     let icon = ''
 
@@ -287,7 +284,7 @@ function showDate(date, lastDate) {
     const actualDate = date == null ? null : new Date(date)
     const lastDayFormatted = new Date(lastDate)
 
-    console.log('date ---> ', date);
+    
 
     const day = actualDate?.getDate()
     const lastDay = lastDayFormatted.getDate()
@@ -298,7 +295,7 @@ function showDate(date, lastDate) {
     if (day !== lastDay || month !== lastMonth) {
         return <View style={{ flexDirection: 'row', marginBottom: 10, marginTop: 10, alignItems: 'center', paddingStart: 5, borderBottomWidth: 0.2, width: '20%' }}>
             <StyledText padding5 bold small >
-                {console.log(day)}
+                
                 {day ?? '--'}/{month ?? '--'}/{year ?? '----'}
 
             </StyledText>
