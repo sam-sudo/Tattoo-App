@@ -125,7 +125,8 @@ const TaskItem = (propsItem) => {
 
     return (
         <View style={{}}>
-            {showDate(propsItemObject.date, propsItemObject.lastDate)}
+            
+            {showDate(propsItemObject.date, propsItem.lastDate)}
 
 
 
@@ -292,7 +293,14 @@ function showDate(date, lastDate) {
     const lastMonth = lastDayFormatted.getMonth() + 1
     const year = actualDate?.getFullYear()
 
+    // console.log('day ->',day);
+    // console.log('month ->',month);
+    // console.log('lastDay ->',lastDay);
+    // console.log('lastMonth ->',lastMonth);
+
     if (day !== lastDay || month !== lastMonth) {
+        //console.log('trueee----');
+        
         return <View style={{ flexDirection: 'row', marginBottom: 10, marginTop: 10, alignItems: 'center', paddingStart: 5, borderBottomWidth: 0.2, width: '20%' }}>
             <StyledText padding5 bold small >
                 
@@ -302,6 +310,7 @@ function showDate(date, lastDate) {
             <Icon style={{ alignContent: 'center' }} size={13} name="calendar" type="feather" color="grey"></Icon>
         </View>
     }
+    
 
     return null
 
