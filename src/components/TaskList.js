@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import styles from '../../styles/styles.js'
 import { Text, View, Image, FlatList, VirtualizedList, Animated, TouchableOpacity } from 'react-native'
 import { format } from "date-fns";
 
-import TaskItem from './TaskItem'
+import   TaskItem from './TaskItem'
 import { getSupabaseTasks, listenerTasks, mySubscription, supabase } from '../api/supabaseApi.js'
 import { Snackbar } from 'react-native-paper'
 import { Icon } from 'react-native-elements'
@@ -42,7 +42,7 @@ console.log('entra en el componente task');
 
 
     //const sorted_dates = sortDates(ascent, tasks)
-    const sorted_dates = sortDates(ascent, supabaseItems)
+    //const sorted_dates = sortDates(ascent, supabaseItems)
 
     useEffect(() => {
         getSupabaseTasks().then((values) => {
@@ -52,7 +52,10 @@ console.log('entra en el componente task');
 
 
 
-
+    const memoizedSortedDates = useMemo(() => {
+        console.log('render -----');
+        return sortDates(ascent, supabaseItems)
+    },[supabaseItems, ascent])
 
 
 
@@ -88,12 +91,12 @@ console.log('entra en el componente task');
 
 
             <VirtualizedList
-                data={sorted_dates}
+                data={memoizedSortedDates}
                 initialNumToRender={10}
                 getItem={(item, index) => {
                     return item[index]
                 }}
-                getItemCount={(data) => sorted_dates.length}
+                getItemCount={(data) => memoizedSortedDates.length}
 
                 showsVerticalScrollIndicator={false}
                 //key={item => item.id}
@@ -114,7 +117,7 @@ console.log('entra en el componente task');
                 }}
                 //ItemSeparatorComponent={() => <Text >  </Text>}
                 renderItem={({ item: task, index }) => {
-                    console.log('renderiza el item ',index);
+                   // console.log('renderiza el item ',index);
                     var todayDate = format(new Date(), "yyyy-MM-dd")
                     var taskDate = format(new Date(task.date), "yyyy-MM-dd")
 

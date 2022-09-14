@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState, } from 'react'
 import { View, Text, TouchableOpacity, FlatList, Animated, BackHandler } from "react-native";
 import tasks from '../data/tasks';
 import styles from '../../styles/styles';
@@ -15,6 +15,13 @@ const TaskCalendar = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [items, setItems] = useState({});
     const [markedDates, setMarked] = useState({});
+
+    const memoiezMarkDates = useMemo(() =>{
+        console.log('render ----');
+        return markedDates
+    },[markedDates])
+    const memoiezItems = useMemo(() =>items,[items])
+
 
     const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -42,7 +49,6 @@ const TaskCalendar = () => {
         const date = new Date(time)
         return format(date, 'yyyy-MM-dd')
     }
-
 
 
     function marketDates() {
@@ -102,9 +108,9 @@ const TaskCalendar = () => {
         firstObjectTEMP[dateTempDay] = newItems
         newItems.length !== 0 ? setItems(firstObjectTEMP) : null
         let t1 = performance.now()
-        console.log('day -> ', dateTempDay);
-        console.log('time -> ', (t1-t0));
-        console.log('items -> ', firstObjectTEMP);
+        // console.log('day -> ', dateTempDay);
+        // console.log('time -> ', (t1-t0));
+        // console.log('items -> ', firstObjectTEMP);
 
     };
 
@@ -141,9 +147,7 @@ const TaskCalendar = () => {
 
             <Agenda
                 //keyExtractor={item}
-                items={items}
-                //loadItemsForMonth={{}}
-                // onDayPress={loadItems}
+                items={memoiezItems}
                 onDayPress={loadItems}
                 scrollEventThrottle={1} // <-- Use 1 here to make sure no events are ever missed
                 renderEmptyData={() => {
@@ -156,12 +160,14 @@ const TaskCalendar = () => {
                 renderItem={(item) => renderDay(item)}
                 
                 hideExtraDays={false}
-                pastScrollRange={5}
-
-                futureScrollRange={5}
-                key={(item) => item.id}
-                markedDates={markedDates}
+                pastScrollRange={20}
                 
+                futureScrollRange={20}
+                key={(item) => item.id}
+                markedDates={memoiezMarkDates}
+                collapsable={true}
+                
+               
                 maxToRenderPerBatch={5}
                 initialNumToRender={5}
                 updateCellsBatchingPeriod={30}
