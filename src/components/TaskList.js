@@ -3,7 +3,7 @@ import styles from '../../styles/styles.js'
 import { Text, View, Image, FlatList, VirtualizedList, Animated, TouchableOpacity } from 'react-native'
 import { format } from "date-fns";
 
-import   TaskItem from './TaskItem'
+import TaskItem from './TaskItem'
 import { getSupabaseTasks, listenerTasks, mySubscription, supabase } from '../api/supabaseApi.js'
 import { Snackbar } from 'react-native-paper'
 import { Icon } from 'react-native-elements'
@@ -28,7 +28,7 @@ function sortDates(ascent, tasks) {
 
 const TaskList = () => {
 
-console.log('entra en el componente task');
+    console.log('entra en el componente task');
     const [supabaseItems, setSupabaseItems] = useState([])
     const [isRefresh, setIsRefresh] = useState(false)
     const [showSnackbar, setShowSnackbar] = useState(false)
@@ -55,7 +55,7 @@ console.log('entra en el componente task');
     const memoizedSortedDates = useMemo(() => {
         console.log('render -----');
         return sortDates(ascent, supabaseItems)
-    },[supabaseItems, ascent])
+    }, [supabaseItems, ascent])
 
 
 
@@ -110,14 +110,18 @@ console.log('entra en el componente task');
                 onRefresh={() => {
                     setIsRefresh(true)
                     getSupabaseTasks().then((values) => {
-                        setSupabaseItems(values)
+                        
+                        if(!JSON.stringify(supabaseItems) === JSON.stringify(sortDates(ascent,values))){
+                            setSupabaseItems(values)
+                        }
+                        
                     }).finally(() => {
                         setIsRefresh(false)
                     })
                 }}
                 //ItemSeparatorComponent={() => <Text >  </Text>}
                 renderItem={({ item: task, index }) => {
-                   // console.log('renderiza el item ',index);
+                    // console.log('renderiza el item ',index);
                     var todayDate = format(new Date(), "yyyy-MM-dd")
                     var taskDate = format(new Date(task.date), "yyyy-MM-dd")
 
