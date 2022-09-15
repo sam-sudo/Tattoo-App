@@ -8,7 +8,8 @@ import { Icon } from "react-native-elements"
 import { TaskItemModel } from '../model/TaskItemModel';
 import ItemModal from './Modal/ItemModal'
 import Swipeable from 'react-native-swipeable';
-import { deleteTask, getSupabaseTasks } from '../api/supabaseApi';
+
+import { deleteTask, getSupabaseTasks, supabaseTaskTableSubscribe } from '../api/supabaseApi';
 
 
 
@@ -37,45 +38,68 @@ const TaskItem = (propsItem) => {
         (async () => {
             const image = await getIcon(propsItemObject)
             setImageTime(`http:${image}`)
+
+
+
+
         })()
     }, [])
-
 
 
 
     const state = {
         startValue: new Animated.Value(0),
         endValue: -100,
-        duration: 250
+        duration: 250,
+        opener: false
     }
 
-    const startAnimation =  () => {
-        
+    const startDeletedAnimation = () => {
 
 
-        Animated.timing(state.startValue, {
+
+        const animationClose = Animated.timing(state.startValue, {
             toValue: state.endValue,
             duration: state.duration,
             useNativeDriver: true,
-        }).start(() => { 
-            endAnimation()
-         })
+        })
 
-
-    }
-
-    const endAnimation = () => {
-        Animated.timing(state.startValue, {
+        const animationOpen = Animated.timing(state.endValue, {
             toValue: state.startValue,
             duration: state.duration,
             useNativeDriver: true,
-        }).start();
+        })
+
+        const animationEnd = Animated.timing(state.startValue, {
+            toValue: state.startValue,
+            duration: state.duration,
+            useNativeDriver: true,
+
+        })
+
+        state.opener
+            ?
+            animationEnd.start()
+            :
+            animationClose.start(() => {
+                animationEnd.start()
+            })
+
+
     }
+
+    // const endAnimation = () => {
+    //     console.log('endind...');
+    //     .start();
+    //     state.opener = false
+    // }
 
     const aniamtedStyle = {
         transform: [
             {
-                translateX: state.startValue
+                translateX: state.startValue,
+
+
             }
         ]
     }
@@ -84,32 +108,37 @@ const TaskItem = (propsItem) => {
 
 
     const deleteButon = [
-        <Animated.View style={[{ flex:1},[aniamtedStyle]]}>
+        <Animated.View style={[{ flex: 1 }, [aniamtedStyle]]}>
+
             <TouchableOpacity style={styles.swipeList.rowBackDelete}>
                 <Pressable
 
                     style={[styles.swipeList.deleteButon]}
                     onPressIn={() => {
-                        Alert.alert('Are you sure to delete this?','You will not be able to recover this task ever again!',[
-                            
-                              {
+                        Alert.alert('Are you sure to delete this?', 'You will not be able to recover this task ever again!', [
+
+                            {
                                 text: "No",
-                              },
-                              {
-                                    
+                                onPress: () => {
+                                    endAnimation()
+                                }
+                            },
+                            {
+
                                 text: "Yes",
                                 onPress: () => {
-                                  deleteTask(propsItemObject.id).then(() =>{
-                                      console.log('deleted!!!');
-                                      
-                                      getSupabaseTasks().then((values) => {
-                                          propsItem.setSupabaseItems(values)
-                                      })
-                                  }).catch(() => {
-                                      console.log('error deleting!!!');
-                                  })
+                                    deleteTask(propsItemObject.id).then(() => {
+                                        console.log('deleted!!!');
+
+                                        //   getSupabaseTasks().then((values) => {
+                                        //       propsItem.setSupabaseItems(values)
+                                        //   })
+                                        endAnimation()
+                                    }).catch(() => {
+                                        console.log('error deleting!!!');
+                                    })
                                 },
-                              }
+                            }
                         ])
                     }}>
                     <Icon name="trash" type="feather"></Icon>
@@ -125,26 +154,28 @@ const TaskItem = (propsItem) => {
 
     return (
         <View style={{}}>
-            
+
             {showDate(propsItemObject.date, propsItem.lastDate)}
 
 
 
-            <ItemModal setSupabaseItems={propsItemObject.setSupabaseItems} propsItemObject={propsItemObject} visible={Modalvisible} setModalVisible={setModalVisible} ></ItemModal>
+            <ItemModal setSupabaseItems={propsItem.setSupabaseItems} propsItemObject={propsItemObject} visible={Modalvisible} setModalVisible={setModalVisible} ></ItemModal>
 
 
             <Swipeable
-                
-                
 
-                rightButtonWidth={100}
-                
-                
-                onLeftButtonsOpenRelease={() => {
-                    endAnimation()
+
+                onRightButtonsOpenComplete={() => {
+                    console.log('opened!!!');
+                    state.opener = true
                 }}
-                
-                
+                onRightButtonsCloseComplete={() => {
+                    console.log('closed!!!');
+                    state.opener = false
+                }}
+                rightButtonWidth={100}
+
+
                 rightButtons={deleteButon}>
                 <Animated.View style={[aniamtedStyle]}>
                     <View style={{ flexDirection: 'row', }}>
@@ -174,7 +205,7 @@ const TaskItem = (propsItem) => {
                         </View>
                         <Pressable onPressIn={() => {
 
-                            startAnimation()
+                            startDeletedAnimation()
                             // setTimeout(() => {
                             //     startAnimation()
                             // }, 500);
@@ -285,7 +316,7 @@ function showDate(date, lastDate) {
     const actualDate = date == null ? null : new Date(date)
     const lastDayFormatted = new Date(lastDate)
 
-    
+
 
     const day = actualDate?.getDate()
     const lastDay = lastDayFormatted.getDate()
@@ -300,17 +331,17 @@ function showDate(date, lastDate) {
 
     if (day !== lastDay || month !== lastMonth) {
         //console.log('trueee----');
-        
+
         return <View style={{ flexDirection: 'row', marginBottom: 10, marginTop: 10, alignItems: 'center', paddingStart: 5, borderBottomWidth: 0.2, width: '20%' }}>
             <StyledText padding5 bold small >
-                
+
                 {day ?? '--'}/{month ?? '--'}/{year ?? '----'}
 
             </StyledText>
             <Icon style={{ alignContent: 'center' }} size={13} name="calendar" type="feather" color="grey"></Icon>
         </View>
     }
-    
+
 
     return null
 

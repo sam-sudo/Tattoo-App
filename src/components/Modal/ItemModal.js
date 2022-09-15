@@ -11,44 +11,7 @@ import { addNewItemTask, getSupabaseTasks, mySubscription, supabase, updateItemT
 
 const ModalPoup = ({ visible, setModalVisible,setPropsItemTemp, propsItemObject, children }) => {
 
-    const [showModal, setShowModal] = useState(visible)
     
-
-    useEffect(() => {
-        toggleModal()
-
-    }, [visible])
-
-    const toggleModal = () => {
-        if (visible) {
-            setShowModal(true)
-        } else {
-
-
-            setShowModal(false)
-        }
-    }
-
-    return (
-        <Modal
-            onRequestClose={() => {
-                setModalVisible(false)
-                setPropsItemTemp(propsItemObject)
-            }}
-            transparent visible={showModal}  >
-            <View style={styles.modal.modalItemTask}>
-                <View style={styles.modal.modalContainer}>
-
-
-                    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-
-                        {children}
-                    </ScrollView>
-
-                </View>
-            </View>
-        </Modal>
-    )
 }
 
 
@@ -69,7 +32,7 @@ const showFormatedTime = (time) => {
 
 
 
-const ItemModal = ({ setSupabaseItems, propsItemObject, isNewItem, visible, setModalVisible, }) => {
+const ItemModal = ({  propsItemObject, isNewItem, visible, setModalVisible,setSupabaseItems }) => {
 
 
     const [showFullImg, setShowFullImg] = useState(false)
@@ -200,15 +163,38 @@ const ItemModal = ({ setSupabaseItems, propsItemObject, isNewItem, visible, setM
             )
         }
     }
+    const [showModal, setShowModal] = useState(visible)
+
+    useEffect(() => {
+        toggleModal()
+
+    }, [visible])
+
+    const toggleModal = () => {
+        if (visible) {
+            setShowModal(true)
+        } else {
 
 
+            setShowModal(false)
+        }
+    }
 
 
     return (
+        <Modal
+            onRequestClose={() => {
+                setModalVisible(false)
+                setPropsItemTemp(propsItemObject)
+            }}
+            transparent visible={showModal}  >
+            <View style={styles.modal.modalItemTask}>
+                <View style={styles.modal.modalContainer}>
 
-        <ModalPoup visible={visible} setModalVisible={setModalVisible} propsItemObject={propsItemObject} setPropsItemTemp={setPropsItemTemp} >
 
-            <Modal visible={showFullImg} transparent={true} onRequestClose={() => setShowFullImg(false)}>
+                    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+
+                    <Modal visible={showFullImg} transparent={true} onRequestClose={() => setShowFullImg(false)}>
                 <View style={styles.modal.modalContainerImg}>
                     <Image style={{ flex: 1, width: "100%", resizeMode: "contain" }} source={{ uri: "https://picsum.photos/200" }}></Image>
 
@@ -443,10 +429,17 @@ const ItemModal = ({ setSupabaseItems, propsItemObject, isNewItem, visible, setM
                 </View>
 
             </View>
-        </ModalPoup>
+                    </ScrollView>
 
+                </View>
+            </View>
+        </Modal>
     )
 
 }
+
+
+
+
 
 export default ItemModal

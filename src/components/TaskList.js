@@ -64,7 +64,7 @@ const TaskList = () => {
         <View style={styles.styles.container}>
 
 
-            <ItemModal setIsRefresh={setIsRefresh} isNewItem={true} propsItemObject={propsNewItemObject} visible={Modalvisible} setModalVisible={setModalVisible} ></ItemModal>
+            <ItemModal setIsRefresh={setIsRefresh} isNewItem={true} propsItemObject={propsNewItemObject} visible={Modalvisible} setModalVisible={setModalVisible} setSupabaseItems={setSupabaseItems} ></ItemModal>
 
 
             <Snackbar
@@ -110,11 +110,10 @@ const TaskList = () => {
                 onRefresh={() => {
                     setIsRefresh(true)
                     getSupabaseTasks().then((values) => {
-                        
-                        if(!JSON.stringify(supabaseItems) === JSON.stringify(sortDates(ascent,values))){
-                            setSupabaseItems(values)
-                        }
-                        
+
+                        setSupabaseItems(values)
+
+
                     }).finally(() => {
                         setIsRefresh(false)
                     })
