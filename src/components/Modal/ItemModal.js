@@ -9,27 +9,9 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { addNewItemTask, getSupabaseTasks, mySubscription, supabase, updateItemTask } from "../../api/supabaseApi";
 
 
-const ModalPoup = ({ visible, setModalVisible,setPropsItemTemp, propsItemObject, children }) => {
-
-    
-}
-
-
-
-
-
-
-
-
-
-
 const showFormatedTime = (time) => {
     return new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
-
-
-
-
 
 
 const ItemModal = ({  propsItemObject, isNewItem, visible, setModalVisible,setSupabaseItems }) => {

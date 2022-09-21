@@ -1,5 +1,5 @@
 import { Image, View, Text, Pressable, TouchableOpacity, Animated, Alert } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import StyledText from './StyledText'
 import { getWeather } from '../api/weatherAPI'
 import { format } from "date-fns";
@@ -39,65 +39,58 @@ const TaskItem = (propsItem) => {
             const image = await getIcon(propsItemObject)
             setImageTime(`http:${image}`)
 
-
-
-
         })()
     }, [])
 
 
 
-    const state = {
-        startValue: new Animated.Value(0),
-        endValue: -100,
-        duration: 250,
-        opener: false
-    }
 
-    const startDeletedAnimation = () => {
+    const [state, setState] = useState(false)
+    const fadeAnimClosed = useRef(new Animated.Value(0)).current;
+
+    const fadeIn = () => {
+        console.log('fadeIn');
+        
+        Animated.timing(fadeAnimClosed, {
+            toValue: -100,
+            duration: 250
+        }).start();
+
+        setState(true)
+    };
+    
+
+    const fadeOut = () => {
+        console.log('fadeOut');
+
+        Animated.timing( fadeAnimClosed, {
+            toValue: 0 ,
+            useNativeDriver:true,
+
+            duration: 250
+        }).start();
+        setState(false)
+    };
+
+    const fadeInOut = () => {
+        console.log('fadeInOut');
+
+        Animated.timing( fadeAnimClosed , {
+            toValue: -100,
+            useNativeDriver:true,
+            duration: 250
+        }).start(() => {
+            setState(true)
+            fadeOut()
+        });
+    };
 
 
-
-        const animationClose = Animated.timing(state.startValue, {
-            toValue: state.endValue,
-            duration: state.duration,
-            useNativeDriver: true,
-        })
-
-        const animationOpen = Animated.timing(state.endValue, {
-            toValue: state.startValue,
-            duration: state.duration,
-            useNativeDriver: true,
-        })
-
-        const animationEnd = Animated.timing(state.startValue, {
-            toValue: state.startValue,
-            duration: state.duration,
-            useNativeDriver: true,
-
-        })
-
-        state.opener
-            ?
-            animationEnd.start()
-            :
-            animationClose.start(() => {
-                animationEnd.start()
-            })
-
-
-    }
-
-    // const endAnimation = () => {
-    //     console.log('endind...');
-    //     .start();
-    //     state.opener = false
-    // }
 
     const aniamtedStyle = {
         transform: [
             {
-                translateX: state.startValue,
+                translateX:  fadeAnimClosed   ,
 
 
             }
@@ -120,22 +113,22 @@ const TaskItem = (propsItem) => {
                             {
                                 text: "No",
                                 onPress: () => {
-                                    endAnimation()
+                                    fadeOut()
                                 }
                             },
                             {
 
                                 text: "Yes",
                                 onPress: () => {
-                                    deleteTask(propsItemObject.id).then(() => {
-                                        console.log('deleted!!!');
+                                    // deleteTask(propsItemObject.id).then(() => {
+                                    //     console.log('deleted!!!');
 
-                                        //   getSupabaseTasks().then((values) => {
-                                        //       propsItem.setSupabaseItems(values)
-                                        //   })
-                                        endAnimation()
-                                    }).catch(() => {
-                                        console.log('error deleting!!!');
+                                    //     //endAnimation()
+                                    // }).catch(() => {
+                                    //     console.log('error deleting!!!');
+                                    // })
+                                    getSupabaseTasks().then((values) => {
+                                        propsItem.setSupabaseItems(values)
                                     })
                                 },
                             }
@@ -165,13 +158,16 @@ const TaskItem = (propsItem) => {
             <Swipeable
 
 
+
                 onRightButtonsOpenComplete={() => {
                     console.log('opened!!!');
-                    state.opener = true
+                    
+                    setState(true)
+                    
                 }}
                 onRightButtonsCloseComplete={() => {
                     console.log('closed!!!');
-                    state.opener = false
+                    setState(false)
                 }}
                 rightButtonWidth={100}
 
@@ -204,11 +200,12 @@ const TaskItem = (propsItem) => {
                             </Pressable>
                         </View>
                         <Pressable onPressIn={() => {
-
-                            startDeletedAnimation()
-                            // setTimeout(() => {
-                            //     startAnimation()
-                            // }, 500);
+                            
+                            
+                            
+                                state ? null : fadeInOut()
+                            
+                            
                         }} >
                             <View style={{ flexDirection: 'row', alignItems: 'center', padding: 20, }}>
 

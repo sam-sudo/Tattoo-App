@@ -12,6 +12,8 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 const databaseName_tasks = 'tasks'
 
 
+
+
 export async function getSupabaseTasks() {
     let { data: tasksSupabase, error } = await supabase
         .from(databaseName_tasks)
@@ -46,8 +48,8 @@ export async function addNewItemTask(newItem) {
 
 
 export async function deleteTask(idDelete) {
-    const {data,error} = await supabase
-    .from(databaseName_tasks)
-    .delete()
-    .match({id:idDelete})
+    const { data, error } = await supabase
+        .from(databaseName_tasks)
+        .delete()
+        .match({ id: idDelete })
 }

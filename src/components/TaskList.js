@@ -99,10 +99,10 @@ const TaskList = () => {
                 getItemCount={(data) => memoizedSortedDates.length}
 
                 showsVerticalScrollIndicator={false}
-                //key={item => item.id}
+                
                 keyExtractor={item => {
 
-                    // return item.id
+                     return item.id
 
                 }}
                 refreshing={isRefresh}
@@ -124,12 +124,13 @@ const TaskList = () => {
                     var todayDate = format(new Date(), "yyyy-MM-dd")
                     var taskDate = format(new Date(task.date), "yyyy-MM-dd")
 
-
+                    
                     const regexShowItem = task.date != null && taskDate >= todayDate;
                     const regexShowItemTemp = task.date != null
 
                     if (regexShowItemTemp)
                         return <TaskItem
+                        key={task.id}
                             {...task}
                             lastDate={supabaseItems[index - 1]?.date ?? '0'}
                             setSupabaseItems={setSupabaseItems}
