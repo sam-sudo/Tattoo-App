@@ -41,6 +41,9 @@ const TaskList = () => {
     const [ascent, setAscent] = useState(false)
 
 
+    const [arrayImages, setArrayImages] = useState([])
+
+   
     //const sorted_dates = sortDates(ascent, tasks)
     //const sorted_dates = sortDates(ascent, supabaseItems)
 
@@ -64,7 +67,14 @@ const TaskList = () => {
         <View style={styles.styles.container}>
 
 
-            <ItemModal setIsRefresh={setIsRefresh} isNewItem={true} propsItemObject={propsNewItemObject} visible={Modalvisible} setModalVisible={setModalVisible} setSupabaseItems={setSupabaseItems} ></ItemModal>
+            <ItemModal 
+            setIsRefresh={setIsRefresh} 
+            isNewItem={true} 
+            propsItemObject={propsNewItemObject} 
+            visible={Modalvisible} 
+            
+            setModalVisible={setModalVisible} 
+            setSupabaseItems={setSupabaseItems} ></ItemModal>
 
 
             <Snackbar
@@ -93,6 +103,7 @@ const TaskList = () => {
             <VirtualizedList
                 data={memoizedSortedDates}
                 initialNumToRender={10}
+                key={item => item.id}
                 getItem={(item, index) => {
                     return item[index]
                 }}
@@ -110,7 +121,7 @@ const TaskList = () => {
                 onRefresh={() => {
                     setIsRefresh(true)
                     getSupabaseTasks().then((values) => {
-
+                        
                         setSupabaseItems(values)
 
 

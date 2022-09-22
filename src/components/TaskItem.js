@@ -192,7 +192,7 @@ const TaskItem = (propsItem) => {
 
 
                                     </View>
-                                    <Image style={{ width: 30, height: 30, }} source={{ uri: imageTime }} ></Image>
+                                    {/* <Image style={{ width: 30, height: 30, }} source={{ uri: imageTime }} ></Image> */}
 
 
                                 </View>
