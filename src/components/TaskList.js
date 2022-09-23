@@ -43,7 +43,7 @@ const TaskList = () => {
 
     const [arrayImages, setArrayImages] = useState([])
 
-   
+
     //const sorted_dates = sortDates(ascent, tasks)
     //const sorted_dates = sortDates(ascent, supabaseItems)
 
@@ -67,14 +67,7 @@ const TaskList = () => {
         <View style={styles.styles.container}>
 
 
-            <ItemModal 
-            setIsRefresh={setIsRefresh} 
-            isNewItem={true} 
-            propsItemObject={propsNewItemObject} 
-            visible={Modalvisible} 
-            
-            setModalVisible={setModalVisible} 
-            setSupabaseItems={setSupabaseItems} ></ItemModal>
+           
 
 
             <Snackbar
@@ -110,10 +103,10 @@ const TaskList = () => {
                 getItemCount={(data) => memoizedSortedDates.length}
 
                 showsVerticalScrollIndicator={false}
-                
+
                 keyExtractor={item => {
 
-                     return item.id
+                    return item.id
 
                 }}
                 refreshing={isRefresh}
@@ -121,7 +114,7 @@ const TaskList = () => {
                 onRefresh={() => {
                     setIsRefresh(true)
                     getSupabaseTasks().then((values) => {
-                        
+
                         setSupabaseItems(values)
 
 
@@ -135,16 +128,17 @@ const TaskList = () => {
                     var todayDate = format(new Date(), "yyyy-MM-dd")
                     var taskDate = format(new Date(task.date), "yyyy-MM-dd")
 
-                    
+
                     const regexShowItem = task.date != null && taskDate >= todayDate;
                     const regexShowItemTemp = task.date != null
 
                     if (regexShowItemTemp)
                         return <TaskItem
-                        key={task.id}
+                            key={task.id}
                             {...task}
                             lastDate={supabaseItems[index - 1]?.date ?? '0'}
                             setSupabaseItems={setSupabaseItems}
+                            isRefresh={isRefresh}
                         ></TaskItem>
                 }}
 

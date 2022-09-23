@@ -152,7 +152,7 @@ const TaskItem = (propsItem) => {
 
 
 
-            <ItemModal setSupabaseItems={propsItem.setSupabaseItems} propsItemObject={propsItemObject} visible={Modalvisible} setModalVisible={setModalVisible} ></ItemModal>
+            <ItemModal isRefresh={propsItem.isRefresh} setSupabaseItems={propsItem.setSupabaseItems} propsItemObject={propsItemObject} visible={Modalvisible} setModalVisible={setModalVisible} ></ItemModal>
 
 
             <Swipeable

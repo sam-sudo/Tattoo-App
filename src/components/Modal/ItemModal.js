@@ -15,7 +15,8 @@ const showFormatedTime = (time) => {
 }
 
 
-const ItemModal = ({ propsItemObject, isNewItem, visible, setModalVisible, setSupabaseItems }) => {
+const ItemModal = ({ propsItemObject, isNewItem, visible, setModalVisible, setSupabaseItems, isRefresh }) => {
+
 
 
     const [showFullImg, setShowFullImg] = useState(false)
@@ -26,22 +27,41 @@ const ItemModal = ({ propsItemObject, isNewItem, visible, setModalVisible, setSu
 
     const [arrayImages, setArrayImages] = useState([])
 
+    const [url, setUrl] = useState('')
+
     useEffect(() => {
-        getImages().then(setArrayImages)
-    }, [])
+        getImages('user', propsItemTemp.title).then(setArrayImages)
+    }, [isRefresh] )
 
     const defaultTime = new Date()
 
 
 
-    async function getImages() {
+    const [showModal, setShowModal] = useState(visible)
+    
+    useEffect(() => {
+        toggleModal()
+
+    }, [visible])
+
+    const toggleModal = () => {
+        if (visible) {
+            setShowModal(true)
+        } else {
+
+            
+            setShowModal(false)
+        }
+    }
+    
+    async function getImages(user, taskTitle) {
 
 
 
-        const names = await getBucketNames('images','user','task1')
-        const path = getBucketUrlPath('images','user','task1')
-        return names.map( name => ({uri:path.publicURL+'/'+name.name}))        
-        
+        const names = await getBucketNames('images', 'user', taskTitle)
+        const path = getBucketUrlPath('images', 'user', taskTitle)
+        return names.map(name => ({ uri: path.publicURL + '/' + name.name }))
+
     }
 
 
@@ -74,112 +94,63 @@ const ItemModal = ({ propsItemObject, isNewItem, visible, setModalVisible, setSu
         setDatePickerTimerEnd(false)
     }
 
-
-
-    const ShowImages = () => {
+    const ShowImages = (props) => {
 
         const [indexDot, setIndexDot] = useState(0)
-        
 
-        
-
-        //console.log('arrayImages',arrayImages);
-        
-
-        if (true) {
-
-            console.log(arrayImages);
-
-
-
-            return (
-
-                <View>
-                    <MasonryList
-                        columns={2}
-                        customImageComponent={(item) => {
-                            
-                            return <Image key={item.index} style={[item.style, { borderWidth: 1, borderRadius: 20, margin: 2 }]} source={{ uri: item.source.uri }}></Image>
-                        }}
-                        backgroundColor={styles.colors.mainColor}
-                        images={arrayImages}
-
-                    >
-
-                    </MasonryList>
-                </View>
-
-                // <View>
+        if (arrayImages.length > 0) {
 
 
 
 
-
-                //     {/* <Carousel
-                //         layout='default'
-                //         //loop={true}
-                //         lockScrollWhileSnapping={true}
-                //         data={arrayImages}
-                //         enableMomentum={true}
-                //         onSnapToItem={(index) => {
-
-                //             setIndexDot(index)
-                //         }}
-                //         renderItem={({ item, index }) => {
-                //             console.log('url -> ', item);
-                //             console.log('index -> ', index);
-
-                //             return <TouchableOpacity delayPressIn={1000} onPressIn={() => {
-                //                 //touch
-                //                 setShowFullImg(true)
-                //             }}>
-                //                 <ImageBackground style={{ width: 200, height: 200, }} source={{ uri: item }}>
-                //                     <TouchableOpacity onPressIn={(props) => {
-                //                         //delete img
-                //                     }}>
-                //                         <View style={{ height: 40, justifyContent: 'flex-start', padding: 5 }}>
-
-                //                             <Icon
-
-                //                                 style={{ alignItems: 'flex-end' }}
-                //                                 size={25}
-                //                                 name='minuscircle'
-                //                                 type='antdesign'
-                //                                 color='red'
-                //                             />
+            return <View>
+                <MasonryList
+                columns={2}
+                customImageComponent={(item) => {
 
 
 
-                //                         </View>
-                //                     </TouchableOpacity>
-                //                 </ImageBackground >
-                //             </TouchableOpacity>
-                //         }}
-                //         windowSize={21}
-                //         sliderWidth={styles.windoWidth - 100}
-                //         itemWidth={200}
-                //     //autoplay={true}
+                   // return <Image key={item.index} style={[item.style, { borderWidth: 1, borderRadius: 20, margin: 2 }]} source={{ uri: item.source.uri }}>
+                        return <TouchableOpacity delayPressIn={1000} onPressIn={() => {
+                            //touch
+                            setUrl(item.source.uri)
+                            setShowFullImg(true)
+                        }}>
+                        <ImageBackground style={[item.style, { borderWidth: 1, borderRadius: 20, margin: 2 }]}source={{ uri: item.source.uri }}>
+                                <TouchableOpacity onPressIn={(props) => {
+                                    //delete img
+                                }}>
+                                    <View style={{ height: 40, justifyContent: 'flex-start', padding: 5 }}>
 
-                //     >
+                                        <Icon
 
-                //     </Carousel > 
-                //     <Pagination
-                //         dotsLength={arrayImages.length}
-                //         activeDotIndex={indexDot}
-                //         dotStyle={{
-                //             width: 10,
-                //             height: 10,
-                //             borderRadius: 5,
-                //             marginHorizontal: 8,
-                //             backgroundColor: 'rgba(255, 255, 255, 0.92)'
-                //         }}
+                                            style={{ alignItems: 'flex-end' }}
+                                            size={25}
+                                            name='minuscircle'
+                                            type='antdesign'
+                                            color='red'
+                                        />
 
-                //     >
 
-                //     </Pagination>
-                //     */}
-                // </View>
-            )
+
+                                    </View>
+                                </TouchableOpacity>
+                            </ImageBackground >
+                        </TouchableOpacity>
+                    //</Image>
+                }}
+                backgroundColor={styles.colors.mainColor}
+                images={arrayImages}
+
+            >
+
+            </MasonryList>
+            </View>
+
+
+            // <View>
+
+
 
         } else {
             return (
@@ -189,24 +160,13 @@ const ItemModal = ({ propsItemObject, isNewItem, visible, setModalVisible, setSu
             )
         }
     }
-    const [showModal, setShowModal] = useState(visible)
-
-    useEffect(() => {
-        toggleModal()
-
-    }, [visible])
-
-    const toggleModal = () => {
-        if (visible) {
-            setShowModal(true)
-        } else {
 
 
-            setShowModal(false)
-        }
-    }
 
 
+
+
+    
     return (
         <Modal
             onRequestClose={() => {
@@ -218,11 +178,11 @@ const ItemModal = ({ propsItemObject, isNewItem, visible, setModalVisible, setSu
                 <View style={styles.modal.modalContainer}>
 
 
-                    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+                    <ScrollView style={{ flex: 1 }} nestedScrollEnabled={true} contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
 
                         <Modal visible={showFullImg} transparent={true} onRequestClose={() => setShowFullImg(false)}>
                             <View style={styles.modal.modalContainerImg}>
-                                <Image style={{ flex: 1, width: "100%", resizeMode: "contain" }} source={{ uri: "https://picsum.photos/200" }}></Image>
+                                <Image style={{ flex: 1, width: "100%", resizeMode: "contain" }} source={{ uri: url }}></Image>
 
                             </View>
                         </Modal>
@@ -411,13 +371,16 @@ const ItemModal = ({ propsItemObject, isNewItem, visible, setModalVisible, setSu
                                 }}  >{(propsItemTemp.description?.length ?? '0') + '/300'}</Text>
                             </View>
 
-                            {ShowImages(Array.from(propsItemTemp.img ?? []))}
 
+                            <ShowImages></ShowImages>
 
 
                         </View>
+                        
+                        
 
                         <View >
+                            
                             <View style={{ alignItems: 'center', }}>
 
                                 <View style={{ padding: 10, flexDirection: 'row', alignSelf: 'flex-end' }}>
