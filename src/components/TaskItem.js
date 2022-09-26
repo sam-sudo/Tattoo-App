@@ -120,15 +120,15 @@ const TaskItem = (propsItem) => {
 
                                 text: "Yes",
                                 onPress: () => {
-                                    // deleteTask(propsItemObject.id).then(() => {
-                                    //     console.log('deleted!!!');
+                                    deleteTask(propsItemObject.id).then(() => {
+                                        console.log('deleted!!!');
 
-                                    //     //endAnimation()
-                                    // }).catch(() => {
-                                    //     console.log('error deleting!!!');
-                                    // })
-                                    getSupabaseTasks().then((values) => {
-                                        propsItem.setSupabaseItems(values)
+                                        getSupabaseTasks().then((values) => {
+                                            propsItem.setSupabaseItems(values)
+                                        })
+                                        //endAnimation()
+                                    }).catch(() => {
+                                        console.log('error deleting!!!');
                                     })
                                 },
                             }

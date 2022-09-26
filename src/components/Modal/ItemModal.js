@@ -1,13 +1,15 @@
-import { Image, View, Text, Modal, Pressable, Button, TextInput, TouchableOpacity, ImageBackground } from "react-native"
+import { Image, View, Text, Modal, Button, TextInput, TouchableOpacity, ImageBackground } from "react-native"
 import React, { useEffect, useState } from 'react'
 import { format } from "date-fns";
 import styles from "../../../styles/styles"
-import { CheckBox, Icon } from "react-native-elements"
+import { Icon } from "react-native-elements"
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { ScrollView } from 'react-native-gesture-handler';
-import { addNewItemTask, getSupabaseTasks, mySubscription, supabase, updateItemTask, downloadImgs, getBucketUrlPath, getBucketNames } from "../../api/supabaseApi";
+import { addNewItemTask, getSupabaseTasks, updateItemTask, getBucketUrlPath, getBucketNames } from "../../api/supabaseApi";
 import MasonryList from "react-native-masonry-list";
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { NavigationContainer } from "@react-navigation/native";
+
 
 
 const showFormatedTime = (time) => {
@@ -29,16 +31,17 @@ const ItemModal = ({ propsItemObject, isNewItem, visible, setModalVisible, setSu
 
     const [url, setUrl] = useState('')
 
+
     useEffect(() => {
         getImages('user', propsItemTemp.title).then(setArrayImages)
-    }, [isRefresh] )
+    }, [isRefresh])
 
     const defaultTime = new Date()
 
 
 
     const [showModal, setShowModal] = useState(visible)
-    
+
     useEffect(() => {
         toggleModal()
 
@@ -49,11 +52,11 @@ const ItemModal = ({ propsItemObject, isNewItem, visible, setModalVisible, setSu
             setShowModal(true)
         } else {
 
-            
+
             setShowModal(false)
         }
     }
-    
+
     async function getImages(user, taskTitle) {
 
 
@@ -94,29 +97,27 @@ const ItemModal = ({ propsItemObject, isNewItem, visible, setModalVisible, setSu
         setDatePickerTimerEnd(false)
     }
 
-    const ShowImages = (props) => {
 
-        const [indexDot, setIndexDot] = useState(0)
+    //----pages Components------
 
+    const ImagesPages = () => {
+        console.log('images rendering...');
+        
         if (arrayImages.length > 0) {
 
-
-
-
-            return <View>
+            return <View style={{ flex: 1}}>
                 <MasonryList
-                columns={2}
-                customImageComponent={(item) => {
+                    columns={2}
+                    listContainerStyle={{ justifyContent:'center'}}
+                    
+                    customImageComponent={(item) => {
 
-
-
-                   // return <Image key={item.index} style={[item.style, { borderWidth: 1, borderRadius: 20, margin: 2 }]} source={{ uri: item.source.uri }}>
                         return <TouchableOpacity delayPressIn={1000} onPressIn={() => {
                             //touch
                             setUrl(item.source.uri)
                             setShowFullImg(true)
                         }}>
-                        <ImageBackground style={[item.style, { borderWidth: 1, borderRadius: 20, margin: 2 }]}source={{ uri: item.source.uri }}>
+                            <ImageBackground style={{width:item.style.width/ 1.1, height:item.style.height / 1.1, margin:5}} source={{ uri: item.source.uri }}>
                                 <TouchableOpacity onPressIn={(props) => {
                                     //delete img
                                 }}>
@@ -137,286 +138,319 @@ const ItemModal = ({ propsItemObject, isNewItem, visible, setModalVisible, setSu
                                 </TouchableOpacity>
                             </ImageBackground >
                         </TouchableOpacity>
-                    //</Image>
-                }}
-                backgroundColor={styles.colors.mainColor}
-                images={arrayImages}
+                    }}
+                    backgroundColor={styles.colors.mainColor}
+                    images={arrayImages}
 
-            >
+                >
 
-            </MasonryList>
+                </MasonryList>
             </View>
 
 
-            // <View>
+
 
 
 
         } else {
             return (
-                <View style={{}}>
+                <View style={{backgroundColor:styles.colors.mainColor, justifyContent:'center', flex:1}}>
                     <Text style={{ fontSize: 20, textAlign: 'center' }}>No images</Text>
                 </View>
             )
         }
+
     }
 
 
 
+    const FormPage = () => {
+        return <ScrollView style={{backgroundColor:styles.colors.mainColor}} showsVerticalScrollIndicator={false}>
+
+            <Modal visible={showFullImg} transparent={true} onRequestClose={() => setShowFullImg(false)}>
+                <View style={styles.modal.modalContainerImg}>
+                    <Image style={{ flex: 1, width: "100%", resizeMode: "contain" }} source={{ uri: url }}></Image>
+
+                </View>
+            </Modal>
+
+            <DateTimePickerModal
+
+                isVisible={datePicker}
+                mode={'date'}
+                style={{}}
+                date={propsItemObject.date == undefined ? defaultTime : new Date(propsItemObject.date)}
+                onCancel={hideDatePicker}
+                onConfirm={(props) => {
+                    confirmDatePicker(props)
+                }}
+
+            >
+
+            </DateTimePickerModal>
+            <DateTimePickerModal
+
+                isVisible={datePickerTimerStart}
+                mode={'time'}
+
+                style={{}}
+                date={propsItemObject.date == undefined ? defaultTime : new Date(propsItemObject.date)}
+                onCancel={hideDatePicker}
+                onConfirm={(props) => {
+                    confirmHourStartPicker(props)
+                }}
+
+            >
+
+            </DateTimePickerModal>
+
+            <DateTimePickerModal
+
+                isVisible={datePickerTimerEnd}
+                mode={'time'}
+
+                style={{}}
+                date={propsItemObject.date == undefined ? defaultTime : new Date(propsItemObject.date)}
+                onCancel={hideDatePicker}
+                onConfirm={(props) => {
+                    confirmHourEndPicker(props)
+                }}
+
+            >
+
+            </DateTimePickerModal>
+
+            <View style={styles.modal.modalHeader}>
+
+                <TextInput
+                    placeholder="Title"
+                    multiline={true}
+                    numberOfLines={2}
+                    maxLength={35}
+                    onChangeText={(newTtitle) => {
+                        setPropsItemTemp((prevState) => ({
+                            ...prevState,
+                            title: newTtitle
+                        }))
+                    }}
+                    style={{ width: '100%', fontSize: 30, color: 'white', fontWeight: 'bold' }}>{propsItemTemp.title}</TextInput>
+            </View>
 
 
 
-    
+
+            <View style={{ flex: 1, marginTop: 20 }} >
+                <View style={{ flexDirection: 'row', }}>
+                    <TouchableOpacity
+                        style={{
+                            paddingBottom: 10,
+                            marginEnd: 5,
+                            padding: 5,
+                            borderBottomWidth: 1,
+                            borderColor: 'white',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-around',
+                            flex: 1
+                        }}
+                        onPress={() => {
+                            setDatePicker(true)
+                        }}>
+                        <View >
+
+                            <TextInput editable={false} placeholder='Empty date' style={{ color: 'white', fontSize: 15, }}>{propsItemTemp.date}</TextInput>
+                        </View>
+                        <View >
+                            <Icon name="calendar" type="feather" size={20} style={{ borderTopEndRadius: 10, borderBottomEndRadius: 10, }} color="white" />
+
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{
+                            padding: 5,
+                            marginStart: 5,
+                            paddingBottom: 10,
+                            borderBottomWidth: 1,
+                            borderColor: 'white',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            flex: 0.5
+                        }}
+                        onPress={() => {
+                            setDatePickerTimerStart(true)
+                        }}>
+                        <View >
+                            <TextInput editable={false} placeholder='00:00' style={{ color: 'white', fontSize: 15, textAlign: 'left', }}>{propsItemTemp.hourStart?.slice(0, -3)}</TextInput>
+                        </View>
+                        <View >
+                            <Icon name="clock" type="feather" size={20} style={{ borderTopEndRadius: 10, borderBottomEndRadius: 10, }} color="white" />
+
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{
+                            marginStart: 5,
+                            padding: 5,
+                            paddingBottom: 10,
+                            borderBottomWidth: 1,
+                            borderColor: 'white',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            flex: 0.5
+                        }}
+                        onPress={() => {
+                            setDatePickerTimerEnd(true)
+                        }}>
+                        <View >
+                            <TextInput editable={false} placeholder='00:00' style={{ color: 'white', fontSize: 15, textAlign: 'left' }}>{propsItemTemp.hourEnd?.slice(0, -3)}</TextInput>
+                        </View>
+                        <View >
+                            <Icon name="clock" type="feather" size={20} style={{ borderTopEndRadius: 10, borderBottomEndRadius: 10, }} color="white" />
+
+                        </View>
+                    </TouchableOpacity>
+                </View>
+
+                <View >
+
+                    <TextInput
+                        maxLength={20}
+                        placeholder='Position'
+                        onChangeText={(newPosition) => {
+                            setPropsItemTemp(prevState => ({
+                                ...prevState,
+                                position: newPosition
+                            }))
+                        }}
+                        style={{
+                            marginStart: 5,
+                            paddingBottom: 10,
+                            borderBottomWidth: 1,
+                            borderColor: 'white', color: 'white', fontSize: 15, textAlign: 'left', marginTop: 10, marginEnd: 5
+                        }}>{propsItemTemp.position}</TextInput>
+                </View>
+
+
+
+                <View style={{ marginTop: 30, marginBottom: 30, flexDirection: 'column' }}>
+
+                    <TextInput
+                        multiline={true}
+                        maxLength={300}
+                        //numberOfLines={5}
+                        placeholder='Description'
+                        style={styles.modal.editableInput}
+                        onChangeText={(newDescription) => {
+                            setPropsItemTemp(prevState => ({
+                                ...prevState,
+                                description: newDescription
+                            }))
+                        }}>{propsItemTemp.description}</TextInput>
+
+                    <Text style={{
+                        color: 'white',
+                        fontSize: 12,
+                        textAlign: 'center',
+                        marginTop: 10
+                    }}  >{(propsItemTemp.description?.length ?? '0') + '/300'}</Text>
+                </View>
+
+
+
+
+            </View>
+
+
+
+            <View >
+
+                <View style={{ alignItems: 'center', }}>
+
+                    <View style={{ padding: 10, flexDirection: 'row', alignSelf: 'flex-end' }}>
+                        <View style={{ marginRight: 5 }}>
+                            <Button title='Cancel' onPress={() => {
+                                setModalVisible(false)
+                                setPropsItemTemp(propsItemObject)
+
+                            }}
+                                color='black' >
+
+                            </Button>
+                        </View>
+                        <View>
+                            <Button title='Save' onPress={() => {
+                                //send data update to supabase
+
+                                isNewItem
+                                    ? addNewItemTask(propsItemTemp).then(() => {
+                                        getSupabaseTasks().then((values) => {
+                                            console.log('aqui');
+                                            setSupabaseItems(values)
+                                        })
+                                    })
+                                    : updateItemTask(propsItemTemp)
+
+                                setModalVisible(false)
+                                setPropsItemTemp(propsItemObject)
+
+                                //updateItemTask(propsItemTemp)
+
+                            }}></Button>
+                        </View>
+                    </View>
+                </View>
+
+            </View>
+        </ScrollView>
+
+
+
+
+
+    }
+
+    const Tab = createMaterialTopTabNavigator()
+
+
+
     return (
-        <Modal
+
+
+        < Modal
             onRequestClose={() => {
                 setModalVisible(false)
                 setPropsItemTemp(propsItemObject)
             }}
-            transparent visible={showModal}  >
+            transparent visible={showModal} >
             <View style={styles.modal.modalItemTask}>
                 <View style={styles.modal.modalContainer}>
 
-
-                    <ScrollView style={{ flex: 1 }} nestedScrollEnabled={true} contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-
-                        <Modal visible={showFullImg} transparent={true} onRequestClose={() => setShowFullImg(false)}>
-                            <View style={styles.modal.modalContainerImg}>
-                                <Image style={{ flex: 1, width: "100%", resizeMode: "contain" }} source={{ uri: url }}></Image>
-
-                            </View>
-                        </Modal>
-
-                        <DateTimePickerModal
-
-                            isVisible={datePicker}
-                            mode={'date'}
-
-                            style={{}}
-                            date={propsItemObject.date == undefined ? defaultTime : new Date(propsItemObject.date)}
-                            onCancel={hideDatePicker}
-                            onConfirm={(props) => {
-                                confirmDatePicker(props)
-                            }}
-
-                        >
-
-                        </DateTimePickerModal>
-                        <DateTimePickerModal
-
-                            isVisible={datePickerTimerStart}
-                            mode={'time'}
-
-                            style={{}}
-                            date={propsItemObject.date == undefined ? defaultTime : new Date(propsItemObject.date)}
-                            onCancel={hideDatePicker}
-                            onConfirm={(props) => {
-                                confirmHourStartPicker(props)
-                            }}
-
-                        >
-
-                        </DateTimePickerModal>
-
-                        <DateTimePickerModal
-
-                            isVisible={datePickerTimerEnd}
-                            mode={'time'}
-
-                            style={{}}
-                            date={propsItemObject.date == undefined ? defaultTime : new Date(propsItemObject.date)}
-                            onCancel={hideDatePicker}
-                            onConfirm={(props) => {
-                                confirmHourEndPicker(props)
-                            }}
-
-                        >
-
-                        </DateTimePickerModal>
-
-                        <View style={styles.modal.modalHeader}>
-
-                            <TextInput
-                                placeholder="Title"
-                                multiline={true}
-                                numberOfLines={2}
-                                maxLength={35}
-                                onChangeText={(newTtitle) => {
-                                    setPropsItemTemp((prevState) => ({
-                                        ...prevState,
-                                        title: newTtitle
-                                    }))
-                                }}
-                                style={{ width: '100%', fontSize: 30, color: 'white', fontWeight: 'bold' }}>{propsItemTemp.title}</TextInput>
-                        </View>
-
-
-
-
-                        <View style={{ flex: 1, marginTop: 20 }} >
-                            <View style={{ flexDirection: 'row', }}>
-                                <TouchableOpacity
-                                    style={{
-                                        paddingBottom: 10,
-                                        marginEnd: 5,
-                                        padding: 5,
-                                        borderBottomWidth: 1,
-                                        borderColor: 'white',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-around',
-                                        flex: 1
-                                    }}
-                                    onPressIn={() => {
-                                        setDatePicker(true)
-                                    }}>
-                                    <View >
-
-                                        <TextInput editable={false} placeholder='Empty date' style={{ color: 'white', fontSize: 15, }}>{propsItemTemp.date}</TextInput>
-                                    </View>
-                                    <View >
-                                        <Icon name="calendar" type="feather" size={20} style={{ borderTopEndRadius: 10, borderBottomEndRadius: 10, }} color="white" />
-
-                                    </View>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={{
-                                        padding: 5,
-                                        marginStart: 5,
-                                        paddingBottom: 10,
-                                        borderBottomWidth: 1,
-                                        borderColor: 'white',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        flex: 0.5
-                                    }}
-                                    onPressIn={() => {
-                                        setDatePickerTimerStart(true)
-                                    }}>
-                                    <View >
-                                        <TextInput editable={false} placeholder='00:00' style={{ color: 'white', fontSize: 15, textAlign: 'left', }}>{propsItemTemp.hourStart?.slice(0, -3)}</TextInput>
-                                    </View>
-                                    <View >
-                                        <Icon name="clock" type="feather" size={20} style={{ borderTopEndRadius: 10, borderBottomEndRadius: 10, }} color="white" />
-
-                                    </View>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={{
-                                        marginStart: 5,
-                                        padding: 5,
-                                        paddingBottom: 10,
-                                        borderBottomWidth: 1,
-                                        borderColor: 'white',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        flex: 0.5
-                                    }}
-                                    onPressIn={() => {
-                                        setDatePickerTimerEnd(true)
-                                    }}>
-                                    <View >
-                                        <TextInput editable={false} placeholder='00:00' style={{ color: 'white', fontSize: 15, textAlign: 'left' }}>{propsItemTemp.hourEnd?.slice(0, -3)}</TextInput>
-                                    </View>
-                                    <View >
-                                        <Icon name="clock" type="feather" size={20} style={{ borderTopEndRadius: 10, borderBottomEndRadius: 10, }} color="white" />
-
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-
-                            <View >
-
-                                <TextInput
-                                    maxLength={20}
-                                    placeholder='Position'
-                                    onChangeText={(newPosition) => {
-                                        setPropsItemTemp(prevState => ({
-                                            ...prevState,
-                                            position: newPosition
-                                        }))
-                                    }}
-                                    style={{
-                                        marginStart: 5,
-                                        paddingBottom: 10,
-                                        borderBottomWidth: 1,
-                                        borderColor: 'white', color: 'white', fontSize: 15, textAlign: 'left', marginTop: 10, marginEnd: 5
-                                    }}>{propsItemTemp.position}</TextInput>
-                            </View>
-
-
-
-                            <View style={{ marginTop: 30, marginBottom: 30, flexDirection: 'column' }}>
-
-                                <TextInput
-                                    multiline={true}
-                                    maxLength={300}
-                                    //numberOfLines={5}
-                                    placeholder='Description'
-                                    style={styles.modal.editableInput}
-                                    onChangeText={(newDescription) => {
-                                        setPropsItemTemp(prevState => ({
-                                            ...prevState,
-                                            description: newDescription
-                                        }))
-                                    }}>{propsItemTemp.description}</TextInput>
-
-                                <Text style={{
-                                    color: 'white',
-                                    fontSize: 12,
-                                    textAlign: 'center',
-                                    marginTop: 10
-                                }}  >{(propsItemTemp.description?.length ?? '0') + '/300'}</Text>
-                            </View>
-
-
-                            <ShowImages></ShowImages>
-
-
-                        </View>
-                        
-                        
-
-                        <View >
+                    <NavigationContainer  independent={true}>
+                        <Tab.Navigator screenOptions={{
                             
-                            <View style={{ alignItems: 'center', }}>
+                            tabBarShowLabel:true, 
+                            tabBarShowIcon:false,
+                            tabBarPressColor:'white',
+                            tabBarLabelStyle:{fontWeight:'bold'},
+                            tabBarActiveTintColor:'white',                            
+                            tabBarContentContainerStyle:{backgroundColor:styles.colors.mainColor}
+                            }} >
+                            <Tab.Screen  name='form'   component={FormPage}></Tab.Screen>
+                            <Tab.Screen name='Images'  component={ImagesPages}></Tab.Screen>
+                        </Tab.Navigator>
+                        
+                    </NavigationContainer>
 
-                                <View style={{ padding: 10, flexDirection: 'row', alignSelf: 'flex-end' }}>
-                                    <View style={{ marginRight: 5 }}>
-                                        <Button title='Cancel' onPress={() => {
-                                            setModalVisible(false)
-                                            setPropsItemTemp(propsItemObject)
-
-                                        }}
-                                            color='black' >
-
-                                        </Button>
-                                    </View>
-                                    <View>
-                                        <Button title='Save' onPress={() => {
-                                            //send data update to supabase
-
-                                            isNewItem ? addNewItemTask(propsItemTemp) : updateItemTask(propsItemTemp)
-                                            setModalVisible(false)
-                                            getSupabaseTasks().then((values) => {
-                                                console.log('aqui');
-                                                setSupabaseItems(values)
-                                            })
-                                            //updateItemTask(propsItemTemp)
-
-                                        }}></Button>
-                                    </View>
-                                </View>
-                            </View>
-
-                        </View>
-                    </ScrollView>
 
                 </View>
             </View>
-        </Modal>
+        </Modal >
+
+
+
+
     )
 
 }

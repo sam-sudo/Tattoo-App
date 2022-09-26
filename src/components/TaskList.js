@@ -67,7 +67,16 @@ const TaskList = () => {
         <View style={styles.styles.container}>
 
 
-           
+            <ItemModal
+                setIsRefresh={setIsRefresh}
+                isNewItem={true}
+                propsItemObject={propsNewItemObject}
+                visible={Modalvisible}
+
+                setModalVisible={setModalVisible}
+                setSupabaseItems={setSupabaseItems} >
+
+            </ItemModal>
 
 
             <Snackbar
@@ -95,15 +104,12 @@ const TaskList = () => {
 
             <VirtualizedList
                 data={memoizedSortedDates}
-                initialNumToRender={10}
+                initialNumToRender={12}
                 key={item => item.id}
-                getItem={(item, index) => {
-                    return item[index]
-                }}
+                getItem={(item, index) => item[index]  }
                 getItemCount={(data) => memoizedSortedDates.length}
-
                 showsVerticalScrollIndicator={false}
-
+                windowSize={21}
                 keyExtractor={item => {
 
                     return item.id

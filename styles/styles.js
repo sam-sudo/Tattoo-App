@@ -16,7 +16,8 @@ const styles = StyleSheet.create({
 
     container: {
         //marginTop: Constants.statusBarHeight,
-        // margin: 10,
+         margin: 5,
+         paddingBottom:20,
         //borderWidth:1,
         //height:300
         //height: windowHeight,
