@@ -68,12 +68,11 @@ const TaskList = () => {
 
 
             <ItemModal
-                setIsRefresh={setIsRefresh}
-                isNewItem={true}
                 propsItemObject={propsNewItemObject}
+                isNewItem={true}
                 visible={Modalvisible}
-
                 setModalVisible={setModalVisible}
+                setIsRefresh={setIsRefresh}
                 setSupabaseItems={setSupabaseItems} >
 
             </ItemModal>

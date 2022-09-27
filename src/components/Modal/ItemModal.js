@@ -98,26 +98,49 @@ const ItemModal = ({ propsItemObject, isNewItem, visible, setModalVisible, setSu
     }
 
 
-    //----pages Components------
+    //----pages Components-----
+
+
+    const FullImg = () => (
+
+        <Modal transparent={true} onRequestClose={() => setShowFullImg(false)}>
+            <View style={styles.modal.modalContainerImg}>
+                <Image style={{ flex: 1, width: "100%", resizeMode: "contain" }} source={{ uri: url }}></Image>
+
+            </View>
+        </Modal>
+    )
+
 
     const ImagesPages = () => {
         console.log('images rendering...');
-        
+
         if (arrayImages.length > 0) {
 
-            return <View style={{ flex: 1}}>
+            return <View style={{ flex: 1 }}>
+
+                {
+
+                    showFullImg
+                        ? <FullImg></FullImg>
+                        : null
+                }
+
                 <MasonryList
                     columns={2}
-                    listContainerStyle={{ justifyContent:'center'}}
-                    
+
+                    listContainerStyle={{ justifyContent: 'center' }}
+                    backgroundColor={styles.colors.mainColor}
+                    images={arrayImages}
                     customImageComponent={(item) => {
 
-                        return <TouchableOpacity delayPressIn={1000} onPressIn={() => {
+                        return <TouchableOpacity key={item.source.uri} delayPressIn={1000} onPressIn={() => {
                             //touch
+
                             setUrl(item.source.uri)
                             setShowFullImg(true)
                         }}>
-                            <ImageBackground style={{width:item.style.width/ 1.1, height:item.style.height / 1.1, margin:5}} source={{ uri: item.source.uri }}>
+                            <ImageBackground style={{ width: item.style.width / 1.1, height: item.style.height / 1.1, margin: 5 }} source={{ uri: item.source.uri }}>
                                 <TouchableOpacity onPressIn={(props) => {
                                     //delete img
                                 }}>
@@ -139,8 +162,7 @@ const ItemModal = ({ propsItemObject, isNewItem, visible, setModalVisible, setSu
                             </ImageBackground >
                         </TouchableOpacity>
                     }}
-                    backgroundColor={styles.colors.mainColor}
-                    images={arrayImages}
+                    
 
                 >
 
@@ -148,13 +170,9 @@ const ItemModal = ({ propsItemObject, isNewItem, visible, setModalVisible, setSu
             </View>
 
 
-
-
-
-
         } else {
             return (
-                <View style={{backgroundColor:styles.colors.mainColor, justifyContent:'center', flex:1}}>
+                <View style={{ backgroundColor: styles.colors.mainColor, justifyContent: 'center', flex: 1 }}>
                     <Text style={{ fontSize: 20, textAlign: 'center' }}>No images</Text>
                 </View>
             )
@@ -165,14 +183,10 @@ const ItemModal = ({ propsItemObject, isNewItem, visible, setModalVisible, setSu
 
 
     const FormPage = () => {
-        return <ScrollView style={{backgroundColor:styles.colors.mainColor}} showsVerticalScrollIndicator={false}>
+        console.log('render form page ----');
+        return <ScrollView style={{ backgroundColor: styles.colors.mainColor }} showsVerticalScrollIndicator={false}>
 
-            <Modal visible={showFullImg} transparent={true} onRequestClose={() => setShowFullImg(false)}>
-                <View style={styles.modal.modalContainerImg}>
-                    <Image style={{ flex: 1, width: "100%", resizeMode: "contain" }} source={{ uri: url }}></Image>
 
-                </View>
-            </Modal>
 
             <DateTimePickerModal
 
@@ -426,21 +440,23 @@ const ItemModal = ({ propsItemObject, isNewItem, visible, setModalVisible, setSu
             transparent visible={showModal} >
             <View style={styles.modal.modalItemTask}>
                 <View style={styles.modal.modalContainer}>
+                    {console.log('render navigator')}
 
-                    <NavigationContainer  independent={true}>
+
+                    <NavigationContainer independent={true}>
                         <Tab.Navigator screenOptions={{
-                            
-                            tabBarShowLabel:true, 
-                            tabBarShowIcon:false,
-                            tabBarPressColor:'white',
-                            tabBarLabelStyle:{fontWeight:'bold'},
-                            tabBarActiveTintColor:'white',                            
-                            tabBarContentContainerStyle:{backgroundColor:styles.colors.mainColor}
-                            }} >
-                            <Tab.Screen  name='form'   component={FormPage}></Tab.Screen>
-                            <Tab.Screen name='Images'  component={ImagesPages}></Tab.Screen>
+
+                            tabBarShowLabel: true,
+                            tabBarShowIcon: false,
+                            tabBarPressColor: 'white',
+                            tabBarLabelStyle: { fontWeight: 'bold' },
+                            tabBarActiveTintColor: 'white',
+                            tabBarContentContainerStyle: { backgroundColor: styles.colors.mainColor }
+                        }} >
+                            <Tab.Screen name='form' component={FormPage}></Tab.Screen>
+                            <Tab.Screen name='Images' component={ImagesPages}></Tab.Screen>
                         </Tab.Navigator>
-                        
+
                     </NavigationContainer>
 
 
